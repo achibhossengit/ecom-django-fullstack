@@ -1,0 +1,12 @@
+{% extends 'base.html' %}
+{% load static %}
+
+{% block title %}
+  Dcom — Everything, Curated
+{% endblock %}
+
+{% block content %}
+  {% include 'includes/hero.html' %}
+  {% include 'includes/trending_categories.html' %}
+  {% include 'includes/trending_products.html' %}
+{% endblock %}

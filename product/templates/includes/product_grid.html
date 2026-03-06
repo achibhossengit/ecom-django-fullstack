@@ -1,0 +1,10 @@
+<!-- Product grid -->
+<div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+  {% for product in products %}
+    {% include 'includes/product_card.html' %}
+  {% comment %} {% empty %}
+    {% for i in "12345678" %}
+      {% include 'includes/product_card.html' with product=None %}
+    {% endfor %} {% endcomment %}
+  {% endfor %}
+</div>
