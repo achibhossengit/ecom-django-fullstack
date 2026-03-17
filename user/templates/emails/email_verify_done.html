@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+
+{% block content %}
+  <div class="min-h-[70vh] flex items-center justify-center bg-gray-50 px-4">
+    <div class="max-w-md w-full bg-white shadow-md rounded-xl p-8 text-center">
+      <div class="flex justify-center mb-4">
+        <div class="w-14 h-14 flex items-center justify-center rounded-full bg-blue-100">
+          <svg xmlns="http://www.w3.org/2000/svg" class="h-7 w-7 text-blue-600" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l9 6 9-6M4 6h16a2 2 0 012 2v8a2 2 0 01-2 2H4a2 2 0 01-2-2V8a2 2 0 012-2z" />
+          </svg>
+        </div>
+      </div>
+
+      <h1 class="text-2xl font-semibold text-gray-800 mb-2">Verification Email Sent</h1>
+
+      <p class="text-gray-600 mb-6">We have sent a verification link to your email address. Please check your inbox and click the link to activate your account.</p>
+
+      <p class="text-sm text-gray-500 mb-6">If you don't see the email, check your spam folder.</p>
+      <div class="flex space-x-4 justify-center">
+        <!-- Signin Button -->
+        <a href="{% url 'signin' %}" class="inline-block px-6 py-2.5 bg-indigo-600 text-white rounded-lg font-medium shadow hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 transition">Signin Now</a>
+
+        <!-- Resend Email Button -->
+        <a href="{% url 'email_verify' %}" class="inline-block px-6 py-2.5 bg-gray-200 text-gray-800 rounded-lg font-medium shadow hover:bg-gray-300 focus:outline-none focus:ring-2 focus:ring-gray-400 transition">Resend Email</a>
+      </div>
+    </div>
+  </div>
+{% endblock %}
