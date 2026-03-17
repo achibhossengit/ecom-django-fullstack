@@ -20,7 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'core',
     'product',
-    'user'
+    'user',
+    'anymail'
 ]
 
 MIDDLEWARE = [
@@ -75,6 +76,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 AUTH_USER_MODEL = 'user.CustomUser'
+AUTHENTICATION_BACKENDS = ["user.backends.CustomModelBackend"]
 
 
 # Internationalization
@@ -95,3 +97,11 @@ USE_TZ = True
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR/'staticfiles'
 STATICFILES_DIRS = [BASE_DIR/"static"]
+
+# anymail config
+EMAIL_BACKEND = config("EMAIL_BACKEND")
+EMAIL_PROVIDER_NAME = config("EMAIL_PROVIDER_NAME").upper()
+ANYMAIL = {
+    f"{EMAIL_PROVIDER_NAME}_API_KEY": config("EMAIL_API_KEY"),
+}
+DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
