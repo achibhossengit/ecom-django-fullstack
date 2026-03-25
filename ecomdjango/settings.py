@@ -105,3 +105,13 @@ ANYMAIL = {
     f"{EMAIL_PROVIDER_NAME}_API_KEY": config("EMAIL_API_KEY"),
 }
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+GOOGLE_CLIENT_CONFIG = {
+    "web": {
+        "client_id": config("GOOGLE_CLIENT_ID"),
+        "client_secret": config("GOOGLE_CLIENT_SECRET"),
+        "auth_uri": config("GOOGLE_AUTH_URI"),
+        "token_uri": config("GOOGLE_TOKEN_URI"),
+        "redirect_uris": [config("GOOGLE_REDIRECT_URI")]
+    }
+}
