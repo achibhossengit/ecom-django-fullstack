@@ -1,31 +1,40 @@
+{% load i18n %}
+
 <!-- Product Grid: Trending / New Arrivals -->
-<section class="py-24" style="background: var(--sand);">
+<section class="py-24 bg-base-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+
     <!-- Section header with tabs -->
     <div class="flex flex-col sm:flex-row sm:items-end justify-between gap-6 mb-12">
       <div>
         <span class="flex items-center gap-3 mb-3">
-          <span class="inline-block w-6 h-0.5 bg-coral"></span>
-          <span class="text-xs font-medium tracking-widest uppercase text-muted">Handpicked</span>
+          <span class="inline-block w-6 h-0.5 bg-primary"></span>
+          <span class="text-xs font-medium tracking-widest uppercase text-base-content/70">
+            {% trans "Handpicked" %}
+          </span>
         </span>
-        <h2 class="font-display text-4xl lg:text-5xl font-black" style="color: var(--ink);">Trending Now</h2>
+        <h2 class="text-4xl lg:text-5xl font-black text-base-content">
+          {% trans "Trending Now" %}
+        </h2>
       </div>
 
       <!-- Filter tabs -->
-      <div class="flex items-center gap-2 flex-wrap">
-        <button class="px-4 py-2 rounded-full text-sm font-medium bg-coral text-white cursor-pointer" onclick="filterTab(this, 'all')">All</button>
-        <button class="px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-ink hover:text-white cursor-pointer" style="background:var(--sand-dark); color:var(--ink);" onclick="filterTab(this, 'new')">New</button>
-        <button class="px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-ink hover:text-white cursor-pointer" style="background:var(--sand-dark); color:var(--ink);" onclick="filterTab(this, 'sale')">On Sale</button>
-        <button class="px-4 py-2 rounded-full text-sm font-medium transition-all hover:bg-ink hover:text-white cursor-pointer" style="background:var(--sand-dark); color:var(--ink);" onclick="filterTab(this, 'top')">Top Rated</button>
+      <div class="tabs tabs-boxed">
+        <a class="tab tab-active" onclick="filterTab(this, 'all')">{% trans "All" %}</a>
+        <a class="tab" onclick="filterTab(this, 'new')">{% trans "New" %}</a>
+        <a class="tab" onclick="filterTab(this, 'sale')">{% trans "On Sale" %}</a>
+        <a class="tab" onclick="filterTab(this, 'top')">{% trans "Top Rated" %}</a>
       </div>
     </div>
 
+    <!-- Product grid include -->
     {% include 'includes/product_grid.html' with products=products %}
 
     <!-- View all CTA -->
     <div class="mt-14 text-center">
-      <a href="/products/" class="inline-flex items-center gap-3 px-8 py-4 rounded-full bg-ink text-white font-medium hover:bg-coral transition-colors">
-        View All Products<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <a href="/products/" class="btn btn-primary gap-2">
+        {% trans "View All Products" %}
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </a>
@@ -35,13 +44,10 @@
 
 <script>
   function filterTab(el, filter) {
-    document.querySelectorAll('[onclick^="filterTab"]').forEach((btn) => {
-      btn.style.background = 'var(--sand-dark)'
-      btn.style.color = 'var(--ink)'
-      btn.classList.remove('bg-coral', 'text-white')
-    })
-    el.style.background = 'var(--coral)'
-    el.style.color = 'white'
+    document.querySelectorAll('.tabs .tab').forEach((btn) => {
+      btn.classList.remove('tab-active');
+    });
+    el.classList.add('tab-active');
+    // TODO: add filtering logic for product grid
   }
 </script>
-

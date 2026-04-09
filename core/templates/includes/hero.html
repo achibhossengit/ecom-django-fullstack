@@ -1,100 +1,94 @@
-{% load static %}
-<!-- Hero Section -->
-<section class="hero-clip relative overflow-hidden" style="background: var(--sand); min-height: 88vh;">
+{% load static i18n %}
 
+<section class="hero min-h-screen bg-base-200 relative overflow-hidden">
   <!-- Background decorative circles -->
-  <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-20 animate-fade-in" style="background: var(--coral);"></div>
-  <div class="absolute bottom-20 left-1/3 w-64 h-64 rounded-full opacity-10 animate-fade-in delay-200" style="background: var(--coral);"></div>
+  <div class="absolute -top-20 -right-20 w-96 h-96 rounded-full opacity-20 bg-primary animate-fade-in"></div>
+  <div class="absolute bottom-20 left-1/3 w-64 h-64 rounded-full opacity-10 bg-secondary animate-fade-in delay-200"></div>
 
-  <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10">
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center" style="min-height: 88vh; padding: 5rem 0 8rem;">
+  <div class="hero-content flex-col lg:flex-row gap-12 relative z-10">
+    <!-- Left: Copy -->
+    <div class="flex flex-col gap-6 max-w-lg">
+      <!-- Eyebrow -->
+      <div class="flex items-center gap-3 animate-fade-up">
+        <span class="inline-block w-8 h-0.5 bg-primary"></span>
+        <span class="text-xs font-medium tracking-widest uppercase text-base-content/70">
+          {% trans "Summer Collection 2025" %}
+        </span>
+      </div>
 
-      <!-- Left: Copy -->
-      <div class="flex flex-col gap-6">
-        <!-- Eyebrow -->
-        <div class="animate-fade-up flex items-center gap-3">
-          <span class="inline-block w-8 h-0.5 bg-coral"></span>
-          <span class="text-xs font-medium tracking-widest uppercase text-muted">Summer Collection 2025</span>
+      <!-- Headline -->
+      <h1 class="text-6xl lg:text-7xl font-black leading-tight text-base-content animate-fade-up delay-100">
+        {% trans "Find Your" %}<br>
+        <em class="not-italic text-primary">{% trans "Perfect" %}</em><br>
+        {% trans "Match." %}
+      </h1>
+
+      <!-- Subheading -->
+      <p class="text-lg leading-relaxed text-base-content/70 animate-fade-up delay-200">
+        {% trans "Thousands of curated products across every category — fashion, tech, home, and beyond. Discover what's next for you." %}
+      </p>
+
+      <!-- CTAs -->
+      <div class="flex gap-4 flex-wrap animate-fade-up delay-300">
+        <a href="/products/{{ hero_product.id }}/" class="btn btn-primary">
+          {% trans "Shop Now" %}
+        </a>
+        <a href="/categories/" class="btn btn-outline">
+          {% trans "Browse Categories" %}
+        </a>
+      </div>
+
+      <!-- Trust badges -->
+      <div class="flex gap-8 mt-4 animate-fade-up delay-400 text-sm">
+        <div class="text-center">
+          <p class="font-bold text-primary">50K+</p>
+          <p class="opacity-70">{% trans "Products" %}</p>
         </div>
-
-        <!-- Headline -->
-        <h1 class="font-display text-6xl lg:text-7xl xl:text-8xl font-black leading-none animate-fade-up delay-100" style="color: var(--ink);">
-          Find Your<br>
-          <em class="not-italic text-coral">Perfect</em><br>
-          Match.
-        </h1>
-
-        <!-- Subheading -->
-        <p class="text-lg leading-relaxed max-w-md animate-fade-up delay-200" style="color: var(--muted);">
-          Thousands of curated products across every category — fashion, tech, home, and beyond. Discover what's next for you.
-        </p>
-
-        <!-- CTAs -->
-        <div class="flex items-center gap-4 flex-wrap animate-fade-up delay-300">
-          <a href="/products/" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full bg-coral text-white font-medium text-sm hover:bg-coral-dark transition-all hover:gap-4">
-            Shop Now
-            <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7"/>
-            </svg>
-          </a>
-          <a href="/categories/" class="inline-flex items-center gap-2 px-7 py-3.5 rounded-full border font-medium text-sm transition-all hover:bg-ink hover:text-white hover:border-ink" style="border-color: var(--ink); color: var(--ink);">
-            Browse Categories
-          </a>
+        <div class="text-center">
+          <p class="font-bold text-primary">4.9★</p>
+          <p class="opacity-70">{% trans "Avg. Rating" %}</p>
         </div>
+        <div class="text-center">
+          <p class="font-bold text-primary">120+</p>
+          <p class="opacity-70">{% trans "Brands" %}</p>
+        </div>
+      </div>
+    </div>
 
-        <!-- Trust badges -->
-        <div class="flex items-center gap-8 mt-2 animate-fade-up delay-400">
-          <div class="text-center">
-            <p class="font-display text-2xl font-bold text-coral">50K+</p>
-            <p class="text-xs text-muted mt-0.5">Products</p>
-          </div>
-          <div class="w-px h-10" style="background: var(--sand-dark);"></div>
-          <div class="text-center">
-            <p class="font-display text-2xl font-bold text-coral">4.9★</p>
-            <p class="text-xs text-muted mt-0.5">Avg. Rating</p>
-          </div>
-          <div class="w-px h-10" style="background: var(--sand-dark);"></div>
-          <div class="text-center">
-            <p class="font-display text-2xl font-bold text-coral">120+</p>
-            <p class="text-xs text-muted mt-0.5">Brands</p>
-          </div>
+    <!-- Right: Visual -->
+    <div class="relative animate-fade-in delay-300">
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-sm aspect-[3/4]">
+        <img src="{{ hero_product.image }}" alt="{{ hero_product.name }}" class="w-full h-full object-cover" />
+        <!-- Floating tag -->
+        <div class="absolute top-5 left-5 px-3 py-1.5 rounded-full text-xs font-semibold text-white bg-base-content/70 backdrop-blur">
+          <span class="w-2 h-2 rounded-full bg-primary inline-block"></span>
+          {{ hero_product.tag }}
         </div>
       </div>
 
-      <!-- Right: Visual -->
-      <div class="relative flex items-center justify-center animate-fade-in delay-300">
-        <!-- Main image card -->
-        <div class="relative rounded-3xl overflow-hidden shadow-2xl" style="width: 100%; max-width: 460px; aspect-ratio: 3/4;">
-          <!-- Placeholder gradient — replace src with {% static 'images/hero.jpg' %} -->
-          <div class="w-full h-full" style="background: linear-gradient(135deg, #FDDBC7 0%, #FFB899 40%, #FF7A57 100%); display:flex; align-items:center; justify-content:center;">
-            <img src={{hero_product.image}} alt="" srcset="">
-          </div>
-          <!-- Floating tag -->
-          <div class="absolute top-5 left-5 flex items-center gap-2 px-3 py-1.5 rounded-full text-xs font-semibold text-white" style="background: rgba(26,18,8,0.7); backdrop-filter: blur(8px);">
-            <span class="w-2 h-2 rounded-full bg-coral inline-block"></span>
-            {{hero_product.tag}}
-          </div>
+      <!-- Floating mini-card -->
+      <div class="absolute -bottom-4 -left-4 bg-base-100 rounded-2xl px-4 py-3 shadow-xl flex items-center gap-3 min-w-[180px]">
+        <div class="w-10 h-10 rounded-xl bg-primary flex items-center justify-center shrink-0">
+          <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24">
+            <path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 
+                     2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09
+                     C13.09 3.81 14.76 3 16.5 3 
+                     19.58 3 22 5.42 22 8.5
+                     c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/>
+          </svg>
         </div>
-
-        <!-- Floating mini-card -->
-        <div class="absolute -bottom-4 -left-4 lg:-left-12 bg-white rounded-2xl px-4 py-3 shadow-xl flex items-center gap-3" style="min-width: 180px;">
-          <div class="w-10 h-10 rounded-xl bg-coral flex items-center justify-center shrink-0">
-            <svg class="w-5 h-5 text-white" fill="white" viewBox="0 0 24 24"><path d="M12 21.35l-1.45-1.32C5.4 15.36 2 12.28 2 8.5 2 5.42 4.42 3 7.5 3c1.74 0 3.41.81 4.5 2.09C13.09 3.81 14.76 3 16.5 3 19.58 3 22 5.42 22 8.5c0 3.78-3.4 6.86-8.55 11.54L12 21.35z"/></svg>
-          </div>
-          <div>
-            <p class="text-xs font-semibold" style="color:var(--ink);">Trending Now</p>
-            <p class="text-xs text-muted">2,400+ wishlisted</p>
-          </div>
-        </div>
-
-        <!-- Floating discount badge -->
-        <div class="absolute top-8 -right-2 lg:-right-6 w-16 h-16 rounded-full bg-coral text-white flex flex-col items-center justify-center shadow-lg">
-          <span class="text-xs font-bold leading-none">UP TO</span>
-          <span class="font-display text-xl font-black leading-none">40%</span>
-          <span class="text-xs font-bold leading-none">OFF</span>
+        <div>
+          <p class="text-xs font-semibold text-base-content">{% trans "Trending Now" %}</p>
+          <p class="text-xs opacity-70">2,400+ {% trans "wishlisted" %}</p>
         </div>
       </div>
 
+      <!-- Floating discount badge -->
+      <div class="absolute top-8 -right-6 w-16 h-16 rounded-full bg-primary text-white flex flex-col items-center justify-center shadow-lg">
+        <span class="text-xs font-bold leading-none">{% trans "UP TO" %}</span>
+        <span class="text-xl font-black leading-none">40%</span>
+        <span class="text-xs font-bold leading-none">{% trans "OFF" %}</span>
+      </div>
     </div>
   </div>
 </section>

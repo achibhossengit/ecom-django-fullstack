@@ -1,29 +1,39 @@
+{% load i18n %}
+
 <!-- Featured Categories -->
-<section class="py-24" style="background: var(--warm-white);">
+<section class="py-24 bg-base-200">
   <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+    
     <!-- Section header -->
     <div class="flex items-end justify-between mb-12">
       <div>
         <span class="flex items-center gap-3 mb-3">
-          <span class="inline-block w-6 h-0.5 bg-coral"></span>
-          <span class="text-xs font-medium tracking-widest uppercase text-muted">Explore</span>
+          <span class="inline-block w-6 h-0.5 bg-primary"></span>
+          <span class="text-xs font-medium tracking-widest uppercase text-base-content/70">
+            {% trans "Explore" %}
+          </span>
         </span>
-        <h2 class="font-display text-4xl lg:text-5xl font-black" style="color: var(--ink);">Shop by Category</h2>
+        <h2 class="text-4xl lg:text-5xl font-black text-base-content">
+          {% trans "Shop by Category" %}
+        </h2>
       </div>
-      <a href="/categories/" class="hidden md:inline-flex items-center gap-2 text-sm font-medium text-coral hover:gap-4 transition-all">
-        All Categories<svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <a href="/categories/" 
+         class="hidden md:inline-flex items-center gap-2 text-sm font-medium text-primary hover:gap-4 transition-all">
+        {% trans "All Categories" %}
+        <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
           <path d="M5 12h14M12 5l7 7-7 7" />
         </svg>
       </a>
     </div>
 
-    {% comment %} category_grid {% endcomment %}
+    <!-- Category grid -->
     {% include "includes/category_grid.html" with categories=categories %}
 
-    
     <!-- Mobile: View all link -->
     <div class="mt-8 flex justify-center md:hidden">
-      <a href="/categories/" class="inline-flex items-center gap-2 text-sm font-medium text-coral">View all categories →</a>
+      <a href="/categories/" class="inline-flex items-center gap-2 text-sm font-medium text-primary">
+        {% trans "View all categories" %} →
+      </a>
     </div>
   </div>
 </section>
