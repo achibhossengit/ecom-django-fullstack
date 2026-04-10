@@ -1,7 +1,7 @@
 {% if messages %}
-  <div class="container mx-auto mt-4 px-4">
+  <div id="flash-messages" class="fixed top-16 z-50 space-y-2 w-full">
     {% for message in messages %}
-      <div class="alert 
+      <div class="alert shadow-lg transition-opacity duration-500
                   {% if message.tags == 'success' %}
                     alert-success
                   {% elif message.tags == 'error' %}
@@ -15,4 +15,15 @@
       </div>
     {% endfor %}
   </div>
+
+  <script>
+    // Auto-hide after 3 seconds
+    setTimeout(function() {
+      const flash = document.getElementById('flash-messages');
+      if (flash) {
+        flash.style.opacity = '0';
+        setTimeout(() => flash.remove(), 500); // remove after fade-out
+      }
+    }, 3000);
+  </script>
 {% endif %}

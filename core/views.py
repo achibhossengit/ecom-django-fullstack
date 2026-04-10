@@ -114,4 +114,4 @@ def homepage(request):
 ]
 
     context = {'categories': categories, 'products': products, "hero_product": hero_product}
-    return render(request, 'home.html', context=context)
+    return render(request, 'core/home.html', context=context)

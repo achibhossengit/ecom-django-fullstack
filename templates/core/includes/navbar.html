@@ -25,7 +25,7 @@
         {% include "./navlinks.html" %}
       </ul>
     </div>
-    {% include "includes/logo.html" %}
+    {% include "core/includes/logo.html" %}
   </div>
   <div class="navbar-center hidden lg:flex">
     <ul class="menu menu-horizontal px-1">
@@ -35,13 +35,13 @@
   <div class="navbar-end gap-2">
     {% comment %} theme controller {% endcomment %}
     <div>
-      <label class="swap swap-rotate">
+      <label class="swap swap-rotate ">
         <!-- this hidden checkbox controls the state -->
         <input type="checkbox" class="theme-controller" value="dark" />
 
         <!-- sun icon -->
         <svg
-          class="swap-on h-10 w-10 fill-current"
+          class="swap-on h-5 w-5 lg:h-10 lg:w-10 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -52,7 +52,7 @@
 
         <!-- moon icon -->
         <svg
-          class="swap-off h-10 w-10 fill-current"
+          class="swap-off h-5 w-5 lg:h-10 lg:w-10 fill-current"
           xmlns="http://www.w3.org/2000/svg"
           viewBox="0 0 24 24"
         >
@@ -62,8 +62,8 @@
         </svg>
       </label>
     </div>
-    {% if user.is_authenticated %}
     <div class="flex justify-around gap-2">
+      {% if user.is_authenticated %}
       <div class="flex-none">
         <div class="dropdown dropdown-end">
           <div tabindex="0" role="button" class="btn btn-ghost btn-circle">
@@ -93,7 +93,7 @@
               <span class="text-lg font-bold">8 Items</span>
               <span class="text-info">Subtotal: $999</span>
               <div class="card-actions">
-                <button class="btn btn-primary btn-block">View cart</button>
+                <button class="btn btn-sm lg:btn-md btn-primary btn-block">View cart</button>
               </div>
             </div>
           </div>
@@ -123,10 +123,10 @@
       </div>
       {% else %}
       <div class="flex justify-around gap-2">
-        <a class="btn btn-primary" href="#">{% trans "Sign In" %}</a>
-        <a class="btn btn-primary btn-outline" href="#"
+        <a class="btn btn-sm lg:btn-md btn-primary btn-outline" href="#"
           >{% trans "Sign Up" %}</a
         >
+        <a class="btn btn-sm lg:btn-md btn-primary" href="#">{% trans "Sign In" %}</a>
       </div>
       {% endif %}
     </div>

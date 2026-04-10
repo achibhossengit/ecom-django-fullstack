@@ -1,0 +1,13 @@
+{% extends 'core/layouts/base.html' %}
+{% load i18n %}
+{% load static %}
+
+{% block title %}
+  {% trans "Dcom — Everything, Curated" %}
+{% endblock %}
+
+{% block content %}
+  {% include 'core/includes/hero.html' %}
+  {% include 'core/includes/trending_categories.html' %}
+  {% include 'core/includes/trending_products.html' %}
+{% endblock %}
