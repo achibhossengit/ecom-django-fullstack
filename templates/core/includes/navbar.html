@@ -115,18 +115,18 @@
             tabindex="-1"
             class="menu menu-sm dropdown-content bg-base-100 rounded-box z-1 mt-3 w-52 p-2 shadow"
           >
-            <li><a> {% trans "Profile" %} </a></li>
+            <li><a href="{% url 'account_email' %}"> {% trans "Profile" %} </a></li>
             <li><a>{% trans "Settings" %}</a></li>
-            <li><a>{% trans "Logout" %}</a></li>
+            <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
           </ul>
         </div>
       </div>
       {% else %}
       <div class="flex justify-around gap-2">
-        <a class="btn btn-sm lg:btn-md btn-primary btn-outline" href="#"
+        <a href="{% url 'account_signup' %}" class="btn btn-sm lg:btn-md btn-primary btn-outline"
           >{% trans "Sign Up" %}</a
         >
-        <a class="btn btn-sm lg:btn-md btn-primary" href="#">{% trans "Sign In" %}</a>
+        <a href="{% url 'account_login' %}" class="btn btn-sm lg:btn-md btn-primary" href="#">{% trans "Sign In" %}</a>
       </div>
       {% endif %}
     </div>

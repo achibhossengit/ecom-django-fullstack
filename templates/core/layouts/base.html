@@ -11,24 +11,26 @@
   <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;0,900;1,700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
   {% block extra_head %}{% endblock %}
 </head>
-{% block body %}
-
-<body class="bg-warm-white">
-  <nav>
+<body>
     {% block navbar %}
-    {% include 'core/includes/navbar.html' %}
+      {% include 'core/includes/navbar.html' %}
     {% endblock navbar %}
-  </nav>
-  <main>
-    {% include "core/includes/flush_message.html" %}
-    {% block content %}{% endblock %}
-  </main>
-  <footer>
+
+    {% block message %}
+      {% include "core/includes/flush_message.html" %}
+    {% endblock message %}
+    
+    {% block body %}
+    <div>
+      {% block content %} {% endblock content%}
+    </div>
+    {% endblock body %}
+    
     {% block footer %}
-    {% include "core/includes/footer.html" %}
+      <footer>
+        {% include "core/includes/footer.html" %}
+      </footer>
     {% endblock footer %}
-  </footer>
-  {% block extra_scripts %}{% endblock %}
+    {% block extra_scripts %}{% endblock %}
 </body>
-{% endblock body %}
 </html>

@@ -23,7 +23,8 @@ INSTALLED_APPS = [
     'allauth.account',
     'allauth.socialaccount',
     'allauth.socialaccount.providers.google',
-    
+
+    'users',
     'core',
     'product',
 ]
@@ -114,3 +115,18 @@ ANYMAIL = {
     f"{EMAIL_PROVIDER_NAME}_API_KEY": config("EMAIL_API_KEY"),
 }
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
+
+# allauth config
+ACCOUNT_SIGNUP_FIELDS = [ "email*", "password1*", "password2*" ]
+ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserSignUpForm"
+ACCOUNT_SESSION_REMEMBER = True
+ACCOUNT_LOGIN_METHODS = {"email"}
+ACCOUNT_LOGIN_BY_CODE_ENABLED = True
+
+
+
+# allauth routing
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+ACCOUNT_EMAIL_CONFIRMATION_AUTHENTICATED_REDIRECT_URL = "/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
+ACCOUNT_MAX_EMAIL_ADDRESSES = 1
