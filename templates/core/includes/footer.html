@@ -1,54 +1,57 @@
 {% load i18n %}
-<footer class="footer sm:footer-horizontal bg-base-200 text-base-content p-10 border-t border-base-300">
-  <!-- Brand -->
-<aside>
-  {% include "core/includes/logo.html" with color="text-primary" %}
-  {% with description="Your one-stop destination for curated products across every lifestyle category. Quality you can trust, prices you'll love." %}
-    <p class="text-sm opacity-70 max-w-xs">
-      {% blocktrans %}{{ description }}{% endblocktrans %}
+<footer class="bg-base-300">
+  <div class="footer sm:footer-horizontal text-base-content p-10">
+    <!-- Brand -->
+  <aside>
+    {% include "core/includes/logo.html" with color="text-primary" %}
+    {% with description="Your one-stop destination for curated products across every lifestyle category. Quality you can trust, prices you'll love." %}
+      <p class="text-sm opacity-70 max-w-xs">
+        {% blocktrans %}{{ description }}{% endblocktrans %}
+      </p>
+    {% endwith %}
+  </aside>
+  
+    <!-- Shop -->
+    <nav>
+      <h6 class="footer-title text-secondary">{% trans "Shop" %}</h6>
+      <a class="link link-hover">{% trans "New Arrivals" %}</a>
+      <a class="link link-hover">{% trans "Best Sellers" %}</a>
+      <a class="link link-hover">{% trans "Sale & Deals" %}</a>
+      <a class="link link-hover">{% trans "Collections" %}</a>
+      <a class="link link-hover">{% trans "Gift Cards" %}</a>
+    </nav>
+  
+    <!-- Support -->
+    <nav>
+      <h6 class="footer-title text-secondary">{% trans "Support" %}</h6>
+      <a class="link link-hover">{% trans "FAQ" %}</a>
+      <a class="link link-hover">{% trans "Track Order" %}</a>
+      <a class="link link-hover">{% trans "Returns & Refunds" %}</a>
+      <a class="link link-hover">{% trans "Contact Us" %}</a>
+      <a class="link link-hover">{% trans "Size Guide" %}</a>
+    </nav>
+  
+    <!-- Company -->
+    <nav>
+      <h6 class="footer-title text-secondary">{% trans "Company" %}</h6>
+      <a class="link link-hover">{% trans "About Us" %}</a>
+      <a class="link link-hover">{% trans "Careers" %}</a>
+      <a class="link link-hover">{% trans "Press" %}</a>
+      <a class="link link-hover">{% trans "Privacy Policy" %}</a>
+      <a class="link link-hover">{% trans "Terms of Service" %}</a>
+    </nav>
+
+  </div>
+  <!-- Bottom bar -->
+  <div
+    class="footer footer-center p-4 border-t text-sm"
+  >
+    <p class="flex">
+      © {% now 'Y' %} {% trans "Developed by" %}
+      <a href="https://achibhossen.me" class="text-orange-500 underline"
+        >Achibhossen</a
+      >.
     </p>
-  {% endwith %}
-</aside>
-
-  <!-- Shop -->
-  <nav>
-    <h6 class="footer-title text-secondary">{% trans "Shop" %}</h6>
-    <a class="link link-hover">{% trans "New Arrivals" %}</a>
-    <a class="link link-hover">{% trans "Best Sellers" %}</a>
-    <a class="link link-hover">{% trans "Sale & Deals" %}</a>
-    <a class="link link-hover">{% trans "Collections" %}</a>
-    <a class="link link-hover">{% trans "Gift Cards" %}</a>
-  </nav>
-
-  <!-- Support -->
-  <nav>
-    <h6 class="footer-title text-secondary">{% trans "Support" %}</h6>
-    <a class="link link-hover">{% trans "FAQ" %}</a>
-    <a class="link link-hover">{% trans "Track Order" %}</a>
-    <a class="link link-hover">{% trans "Returns & Refunds" %}</a>
-    <a class="link link-hover">{% trans "Contact Us" %}</a>
-    <a class="link link-hover">{% trans "Size Guide" %}</a>
-  </nav>
-
-  <!-- Company -->
-  <nav>
-    <h6 class="footer-title text-secondary">{% trans "Company" %}</h6>
-    <a class="link link-hover">{% trans "About Us" %}</a>
-    <a class="link link-hover">{% trans "Careers" %}</a>
-    <a class="link link-hover">{% trans "Press" %}</a>
-    <a class="link link-hover">{% trans "Privacy Policy" %}</a>
-    <a class="link link-hover">{% trans "Terms of Service" %}</a>
-  </nav>
+  </div>
 </footer>
 
-<!-- Bottom bar -->
-<div
-  class="footer footer-center p-4 bg-base-200 border-t border-base-300 text-sm opacity-70"
->
-  <p class="flex">
-    © {% now 'Y' %} {% trans "Developed by" %}
-    <a href="https://achibhossen.me" class="text-orange-500 underline"
-      >Achibhossen</a
-    >.
-  </p>
-</div>
