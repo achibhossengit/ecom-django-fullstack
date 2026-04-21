@@ -1,6 +1,8 @@
 from pathlib import Path
 from decouple import config, Csv
 from dj_database_url import parse as db_url
+from django.urls import reverse_lazy
+
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
@@ -107,11 +109,15 @@ STATIC_ROOT = BASE_DIR/'staticfiles'
 STATICFILES_DIRS = [BASE_DIR/"static"]
 
 # anymail config
-EMAIL_BACKEND = config("EMAIL_BACKEND")
+if DEBUG:
+    EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
+else:
+    EMAIL_BACKEND = config("EMAIL_BACKEND", default="anymail.backends.resend.EmailBackend")
+
 EMAIL_PROVIDER_NAME = config("EMAIL_PROVIDER_NAME").upper()
 ANYMAIL = {
-    f"{EMAIL_PROVIDER_NAME}_API_KEY": config("EMAIL_API_KEY"),
-}
+        f"{EMAIL_PROVIDER_NAME}_API_KEY": config("EMAIL_API_KEY"),
+    }
 DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 
 # allauth config
@@ -120,9 +126,22 @@ ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserSignUpForm"
 ACCOUNT_SESSION_REMEMBER = True
 ACCOUNT_LOGIN_METHODS = {"email"}
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
-ACCOUNT_MAX_EMAIL_ADDRESSES = 1
+ACCOUNT_LOGIN_BY_CODE_SUPPORTS_RESEND  = True
+ACCOUNT_LOGOUT_ON_GET = True
+LOGIN_REDIRECT_URL = reverse_lazy("user_profile")
+ACCOUNT_SIGNUP_REDIRECT_URL = reverse_lazy("homepage")
+
+ACCOUNT_EMAIL_VERIFICATION = "mandatory"
+ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
+ACCOUNT_EMAIL_VERIFICATION_SUPPORTS_RESEND = True
+ACCOUNT_CHANGE_EMAIL = True
+ACCOUNT_EMAIL_NOTIFICATIONS = True
+ACCOUNT_UNIQUE_EMAIL = True
+
+ACCOUNT_PASSWORD_RESET_BY_CODE_ENABLED = True
 
 # allauth social account providers config
+SOCIALACCOUNT_LOGIN_ON_GET = True
 SOCIALACCOUNT_EMAIL_AUTHENTICATION_AUTO_CONNECT = True
 SOCIALACCOUNT_PROVIDERS = {
     "google": {

@@ -53,6 +53,15 @@
         </li>
         {% endif %}
 
+        {% url 'usersessions_list' as sessions_url %}
+        {% if sessions_url %}
+        <li>
+          <a href="{{ sessions_url }}" class="{% if request.path == sessions_url %}active font-medium{% endif %}">
+            Sessions
+          </a>
+        </li>
+        {% endif %}
+
         <div class="divider"></div>
 
         {% url 'user_profile' as profile_url %}
