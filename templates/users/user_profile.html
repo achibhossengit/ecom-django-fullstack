@@ -1,0 +1,40 @@
+{% extends "core/layouts/manage_dashboard.html" %} {% block content %}
+<div class="flex flex-col gap-10 space-y-10">
+  <div class="card bg-base-100 border border-base-content/10 mb-4">
+    <div class="card-body p-0">
+      <div class="p-5">
+        <form method="post" action="{% url 'user_profile' %}">
+            {% csrf_token %} 
+
+            {{ form.as_fancy }}
+
+          <div class="divider my-4"></div>
+          <div class="flex justify-between items-center gap-2">
+            <div>
+              <button type="submit" class="btn btn-primary btn-sm">
+                Save changes
+              </button>
+            </div>
+            <div>
+              {% url "account_email" as account_email_url %} 
+              {% url "account_change_password" as account_change_password_url %}
+              <a href="{{ account_email_url }}" class="btn btn-ghost btn-sm btn-outline">
+                Manage Email
+              </a>
+              <a
+                href="{{ account_change_password_url }}"
+                class="btn btn-ghost btn-sm btn-outline"
+              >
+                Change Password
+              </a>
+              <a href="#" class="btn btn-outline btn-sm btn-error">
+                Delete Account
+              </a>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock content %}
