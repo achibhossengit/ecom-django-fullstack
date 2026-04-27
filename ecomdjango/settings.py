@@ -21,6 +21,7 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'django.contrib.humanize',
+    'debug_toolbar',
 
     'anymail',
     
@@ -44,6 +45,7 @@ MIDDLEWARE = [
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     "allauth.account.middleware.AccountMiddleware",
+    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
 
 ROOT_URLCONF = 'ecomdjango.urls'
@@ -164,3 +166,8 @@ SOCIALACCOUNT_PROVIDERS = {
         ],
     }
 }
+
+
+INTERNAL_IPS = [
+    "127.0.0.1",
+]
