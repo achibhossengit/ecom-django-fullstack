@@ -8,4 +8,5 @@ urlpatterns = [
     path('accounts/', include('allauth.urls')),
     path('my-section/', include('users.urls')),
     path('', include('core.urls')),
+    path('dashboard/', include('product.urls')),
 ]+static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

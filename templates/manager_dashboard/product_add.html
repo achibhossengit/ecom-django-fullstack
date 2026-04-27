@@ -1,0 +1,13 @@
+{% extends "core/layouts/manager_dashboard.html" %}
+
+{% block content %}
+<form action="" method="post" class="">
+    {% csrf_token %}
+    {{form.as_fancy}}
+    
+    <div class="my-5 flex gap-5">
+        <a href="{% url "product_list" %}" class="btn btn-primary btn-outline">Cancel</a>
+        <input class="btn btn-primary" type="submit" value="Add Product">
+    </div>
+</form>
+{% endblock content %}

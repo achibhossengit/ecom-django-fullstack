@@ -1,0 +1,37 @@
+{% extends "core/layouts/manager_dashboard.html" %}
+{% block content %}
+<div>
+    {% comment %} product table {% endcomment %}
+    <div>
+        <div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>SKU</th>
+        <th>Name</th>
+        <th>Category</th>
+        <th>Price</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for product in product_list %}
+        <tr>
+          <th>{{forloop.counter}}</th>
+          <td>{{product.sku}}</td>
+          <td><a href="{% url "product_detail" product.pk %}" class="text-primary">{{product.name}}</a></td>
+          <td>{{product.category}}</td>
+          <td>{{product.inventory.price}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+    </div>
+
+    <div class="flex justify-end items-center my-5">
+        <a href="{% url "product_add" %}" class="btn btn-primary">+ Add New Product</a>
+    </div>
+</div>
+{% endblock content %}

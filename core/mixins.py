@@ -9,6 +9,7 @@ class FancyFieldMixin:
     email_class = "input input-bordered"
     select_class = "select select-bordered"
     checkbox_class = "checkbox"
+    textarea_class = "textarea"
 
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
@@ -24,8 +25,13 @@ class FancyFieldMixin:
                 css = self.select_class
             elif isinstance(widget, forms.CheckboxInput):
                 css = self.checkbox_class
+            elif isinstance(widget, forms.Textarea):
+                css = self.textarea_class
+            elif isinstance(widget, forms.NumberInput):
+                css = self.input_class
             else:
                 css = ""
+                
 
             existing = widget.attrs.get("class", "")
             widget.attrs["class"] = f"{existing} {css} {self.base_class}".strip()
@@ -38,3 +44,6 @@ class FancyFormMixin:
             self.fancy_template,
             {"form": self}
         )
+        
+class FancyFormFieldMixin(FancyFieldMixin, FancyFormMixin):
+    pass

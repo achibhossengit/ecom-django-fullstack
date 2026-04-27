@@ -1,0 +1,35 @@
+{% extends "core/layouts/manager_dashboard.html" %}
+{% block content %}
+<div>
+    {% comment %} product table {% endcomment %}
+    <div>
+        <div class="overflow-x-auto">
+  <table class="table table-zebra">
+    <!-- head -->
+    <thead>
+      <tr>
+        <th>No</th>
+        <th>Name</th>
+        <th>Description</th>
+        <th>Products</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% for category in category_list %}
+        <tr>
+          <td>{{forloop.counter}}</td>
+          <td><a href="{% url "category_detail" category.pk %}" class="text-primary"> {{category.name}} </a></td>
+          <td>{{category.description}}</td>
+          <td>{{category.product_count}}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+  </table>
+</div>
+    </div>
+
+    <div class="flex justify-end items-center my-5">
+        <a href="{% url "category_add" %}" class="btn btn-primary">+ Add New Category</a>
+    </div>
+</div>
+{% endblock content %}

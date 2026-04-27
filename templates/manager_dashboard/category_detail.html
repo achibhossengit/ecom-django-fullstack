@@ -1,0 +1,36 @@
+{% extends "core/layouts/manager_dashboard.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto">
+    <!-- Image placeholder -->
+    <div class="w-full h-48 bg-gray-100 flex items-center justify-center rounded-md mb-4">
+        <img src="https://img.freepik.com/free-photo/shop-clothing-clothes-shop-hanger-modern-shop-boutique_1150-8886.jpg?semt=ais_hybrid&w=740&q=80" 
+             alt="Category Image" 
+             class="object-cover h-full w-full rounded-md">
+    </div>
+
+    <!-- Category info -->
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ category.name }}</h2>
+    <p class="text-gray-600 mb-6">{{ category.description }}</p>
+
+    <!-- Action buttons -->
+    <div class="flex justify-between gap-4 my-5">
+        <div>
+            <a href="{% url 'category_list' %}" 
+               class="btn btn-ghost btn-outline">
+                Show Category List
+            </a>
+        </div>
+        <div class="flex justify-end gap-4">
+            <a href="{% url 'category_edit' category.id %}" 
+               class="btn btn-primary btn-outline">
+                Edit Category
+            </a>
+            <a href="{% url 'category_remove' category.id %}" 
+               class="btn btn-error btn-outline">
+                Delete
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock content %}
