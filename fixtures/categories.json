@@ -1,0 +1,12 @@
+[
+  {"model": "product.category", "pk": 1, "fields": {"name": "Fashion", "description": "Clothing and accessories"}},
+  {"model": "product.category", "pk": 2, "fields": {"name": "Electronics", "description": "Phones, laptops, gadgets"}},
+  {"model": "product.category", "pk": 3, "fields": {"name": "Home & Kitchen", "description": "Appliances and furniture"}},
+  {"model": "product.category", "pk": 4, "fields": {"name": "Sports", "description": "Sports gear and equipment"}},
+  {"model": "product.category", "pk": 5, "fields": {"name": "Books", "description": "Fiction and non-fiction"}},
+  {"model": "product.category", "pk": 6, "fields": {"name": "Beauty", "description": "Cosmetics and skincare"}},
+  {"model": "product.category", "pk": 7, "fields": {"name": "Toys", "description": "Kids toys and games"}},
+  {"model": "product.category", "pk": 8, "fields": {"name": "Groceries", "description": "Daily essentials"}},
+  {"model": "product.category", "pk": 9, "fields": {"name": "Automotive", "description": "Car accessories"}},
+  {"model": "product.category", "pk": 10, "fields": {"name": "Health", "description": "Medical supplies"}}
+]

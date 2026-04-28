@@ -1,0 +1,61 @@
+[
+  {"model": "product.inventory", "pk": 1,  "fields": {"product": 1,  "quantity": 120, "price": "59.99",  "updated_at": "2026-04-01T10:00:00Z"}},
+  {"model": "product.inventory", "pk": 2,  "fields": {"product": 2,  "quantity": 85,  "price": "34.99",  "updated_at": "2026-04-01T10:05:00Z"}},
+  {"model": "product.inventory", "pk": 3,  "fields": {"product": 3,  "quantity": 200, "price": "24.99",  "updated_at": "2026-04-01T10:10:00Z"}},
+  {"model": "product.inventory", "pk": 4,  "fields": {"product": 4,  "quantity": 60,  "price": "89.99",  "updated_at": "2026-04-01T10:15:00Z"}},
+  {"model": "product.inventory", "pk": 5,  "fields": {"product": 5,  "quantity": 40,  "price": "149.99", "updated_at": "2026-04-01T10:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 6,  "fields": {"product": 6,  "quantity": 75,  "price": "499.00", "updated_at": "2026-04-02T09:00:00Z"}},
+  {"model": "product.inventory", "pk": 7,  "fields": {"product": 7,  "quantity": 150, "price": "79.99",  "updated_at": "2026-04-02T09:05:00Z"}},
+  {"model": "product.inventory", "pk": 8,  "fields": {"product": 8,  "quantity": 30,  "price": "899.00", "updated_at": "2026-04-02T09:10:00Z"}},
+  {"model": "product.inventory", "pk": 9,  "fields": {"product": 9,  "quantity": 90,  "price": "119.99", "updated_at": "2026-04-02T09:15:00Z"}},
+  {"model": "product.inventory", "pk": 10, "fields": {"product": 10, "quantity": 110, "price": "39.99",  "updated_at": "2026-04-02T09:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 11, "fields": {"product": 11, "quantity": 95,  "price": "29.99",  "updated_at": "2026-04-03T08:00:00Z"}},
+  {"model": "product.inventory", "pk": 12, "fields": {"product": 12, "quantity": 70,  "price": "44.99",  "updated_at": "2026-04-03T08:05:00Z"}},
+  {"model": "product.inventory", "pk": 13, "fields": {"product": 13, "quantity": 55,  "price": "54.99",  "updated_at": "2026-04-03T08:10:00Z"}},
+  {"model": "product.inventory", "pk": 14, "fields": {"product": 14, "quantity": 35,  "price": "179.99", "updated_at": "2026-04-03T08:15:00Z"}},
+  {"model": "product.inventory", "pk": 15, "fields": {"product": 15, "quantity": 80,  "price": "19.99",  "updated_at": "2026-04-03T08:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 16, "fields": {"product": 16, "quantity": 130, "price": "22.99",  "updated_at": "2026-04-04T07:00:00Z"}},
+  {"model": "product.inventory", "pk": 17, "fields": {"product": 17, "quantity": 45,  "price": "199.99", "updated_at": "2026-04-04T07:05:00Z"}},
+  {"model": "product.inventory", "pk": 18, "fields": {"product": 18, "quantity": 100, "price": "69.99",  "updated_at": "2026-04-04T07:10:00Z"}},
+  {"model": "product.inventory", "pk": 19, "fields": {"product": 19, "quantity": 160, "price": "17.99",  "updated_at": "2026-04-04T07:15:00Z"}},
+  {"model": "product.inventory", "pk": 20, "fields": {"product": 20, "quantity": 200, "price": "24.99",  "updated_at": "2026-04-04T07:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 21, "fields": {"product": 21, "quantity": 50,  "price": "42.99",  "updated_at": "2026-04-05T10:00:00Z"}},
+  {"model": "product.inventory", "pk": 22, "fields": {"product": 22, "quantity": 75,  "price": "16.99",  "updated_at": "2026-04-05T10:05:00Z"}},
+  {"model": "product.inventory", "pk": 23, "fields": {"product": 23, "quantity": 90,  "price": "9.99",   "updated_at": "2026-04-05T10:10:00Z"}},
+  {"model": "product.inventory", "pk": 24, "fields": {"product": 24, "quantity": 40,  "price": "34.99",  "updated_at": "2026-04-05T10:15:00Z"}},
+  {"model": "product.inventory", "pk": 25, "fields": {"product": 25, "quantity": 300, "price": "6.99",   "updated_at": "2026-04-05T10:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 26, "fields": {"product": 26, "quantity": 180, "price": "18.99",  "updated_at": "2026-04-06T09:00:00Z"}},
+  {"model": "product.inventory", "pk": 27, "fields": {"product": 27, "quantity": 140, "price": "27.99",  "updated_at": "2026-04-06T09:05:00Z"}},
+  {"model": "product.inventory", "pk": 28, "fields": {"product": 28, "quantity": 65,  "price": "59.99",  "updated_at": "2026-04-06T09:10:00Z"}},
+  {"model": "product.inventory", "pk": 29, "fields": {"product": 29, "quantity": 55,  "price": "49.99",  "updated_at": "2026-04-06T09:15:00Z"}},
+  {"model": "product.inventory", "pk": 30, "fields": {"product": 30, "quantity": 70,  "price": "79.99",  "updated_at": "2026-04-06T09:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 31, "fields": {"product": 31, "quantity": 250, "price": "12.99",  "updated_at": "2026-04-07T08:00:00Z"}},
+  {"model": "product.inventory", "pk": 32, "fields": {"product": 32, "quantity": 85,  "price": "29.99",  "updated_at": "2026-04-07T08:05:00Z"}},
+  {"model": "product.inventory", "pk": 33, "fields": {"product": 33, "quantity": 110, "price": "22.99",  "updated_at": "2026-04-07T08:10:00Z"}},
+  {"model": "product.inventory", "pk": 34, "fields": {"product": 34, "quantity": 120, "price": "11.99",  "updated_at": "2026-04-07T08:15:00Z"}},
+  {"model": "product.inventory", "pk": 35, "fields": {"product": 35, "quantity": 30,  "price": "129.99", "updated_at": "2026-04-07T08:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 36, "fields": {"product": 36, "quantity": 200, "price": "14.99",  "updated_at": "2026-04-08T07:00:00Z"}},
+  {"model": "product.inventory", "pk": 37, "fields": {"product": 37, "quantity": 150, "price": "12.99",  "updated_at": "2026-04-08T07:05:00Z"}},
+  {"model": "product.inventory", "pk": 38, "fields": {"product": 38, "quantity": 90,  "price": "39.99",  "updated_at": "2026-04-08T07:10:00Z"}},
+  {"model": "product.inventory", "pk": 39, "fields": {"product": 39, "quantity": 175, "price": "9.99",   "updated_at": "2026-04-08T07:15:00Z"}},
+  {"model": "product.inventory", "pk": 40, "fields": {"product": 40, "quantity": 130, "price": "11.49",  "updated_at": "2026-04-08T07:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 41, "fields": {"product": 41, "quantity": 95,  "price": "34.99",  "updated_at": "2026-04-09T09:00:00Z"}},
+  {"model": "product.inventory", "pk": 42, "fields": {"product": 42, "quantity": 25,  "price": "299.99", "updated_at": "2026-04-09T09:05:00Z"}},
+  {"model": "product.inventory", "pk": 43, "fields": {"product": 43, "quantity": 140, "price": "29.99",  "updated_at": "2026-04-09T09:10:00Z"}},
+  {"model": "product.inventory", "pk": 44, "fields": {"product": 44, "quantity": 80,  "price": "19.99",  "updated_at": "2026-04-09T09:15:00Z"}},
+  {"model": "product.inventory", "pk": 45, "fields": {"product": 45, "quantity": 20,  "price": "349.99", "updated_at": "2026-04-09T09:20:00Z"}},
+
+  {"model": "product.inventory", "pk": 46, "fields": {"product": 46, "quantity": 60,  "price": "89.99",  "updated_at": "2026-04-10T08:00:00Z"}},
+  {"model": "product.inventory", "pk": 47, "fields": {"product": 47, "quantity": 75,  "price": "44.99",  "updated_at": "2026-04-10T08:05:00Z"}},
+  {"model": "product.inventory", "pk": 48, "fields": {"product": 48, "quantity": 110, "price": "24.99",  "updated_at": "2026-04-10T08:10:00Z"}},
+  {"model": "product.inventory", "pk": 49, "fields": {"product": 49, "quantity": 50,  "price": "54.99",  "updated_at": "2026-04-10T08:15:00Z"}},
+  {"model": "product.inventory", "pk": 50, "fields": {"product": 50, "quantity": 35,  "price": "119.99", "updated_at": "2026-04-10T08:20:00Z"}}
+]
