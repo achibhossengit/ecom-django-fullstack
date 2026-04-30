@@ -11,7 +11,7 @@ class ProfileView(LoginRequiredMixin, View):
     
     def get(self, request):
         form = UserUpdateForm(instance=self.user)
-        return render(request, "users/user_profile.html", {"form": form})
+        return render(request, "my_dashboard/my_profile.html", {"form": form})
 
     def post(self, request):
         form = UserUpdateForm(request.POST, instance=self.user)
@@ -20,4 +20,4 @@ class ProfileView(LoginRequiredMixin, View):
             form.save()
             messages.success(request, "Your profile has been updated successfully.")
 
-        return render(request, "users/user_profile.html", {"form": form})
+        return render(request, "my_dashboard/my_profile.html", {"form": form})

@@ -7,7 +7,8 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
-    path('my-section/', include('users.urls')),
+    path('my-dashboard/', include('users.urls')),
+    path('manager-dashboard/', include('product.urls')),
+    # path('manager-dashboard/', include('order.urls')),
     path('', include('core.urls')),
-    path('dashboard/', include('product.urls')),
 ] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+ debug_toolbar_urls()
