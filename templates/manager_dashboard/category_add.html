@@ -1,13 +1,38 @@
 {% extends "core/layouts/manager_dashboard.html" %}
+{% load static %}
 
 {% block content %}
-<form action="" method="post" class="">
+<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{form.as_fancy}}
+    {{ form.as_fancy }}
+
+    <div class="flex flex-col my-2">
+        <label class="label">Images</label>
+        <div id="dropZone" class="border border-dashed border-base-300 rounded-lg p-5 text-center cursor-pointer bg-base-200 hover:bg-base-300 transition" onclick="document.getElementById('images').click()">
+            <input id="images" name="images" type="file" accept="image/*" multiple class="hidden">
+            <p>Click to upload images</p>
+        </div>
+        <div id="previewStrip" style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
+        <p id="countBadge" style="display:none; font-size:12px; margin-top:6px;"></p>
+
+        {% block extra_js %}
+        <script src="{% static 'js/image_upload_preview.js' %}"></script>
+        <script>
+            initImageUpload({
+                inputId:      'images',
+                stripId:      'previewStrip',
+                dropZoneId:   'dropZone',
+                countBadgeId: 'countBadge',
+            });
+        </script>
+        {% endblock %}
+        
+    </div>
 
     <div class="my-5 flex gap-5">
-        <a href="{% url "category_list" %}" class="btn btn-primary btn-outline">Cancel</a>
+        <a href="{% url 'category_list' %}" class="btn btn-primary btn-outline">Cancel</a>
         <input class="btn btn-primary" type="submit" value="Add Category">
     </div>
 </form>
+
 {% endblock content %}

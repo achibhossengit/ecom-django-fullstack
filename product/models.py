@@ -31,30 +31,30 @@ class Product(models.Model):
         return self.name
 
 
-# class ProductImage(models.Model):
-#     product = models.ForeignKey(
-#         Product,
-#         on_delete=models.CASCADE,
-#         related_name="images",
-#     )
-#     image = models.ImageField(upload_to="products/")
-#     is_default = models.BooleanField(default=False)
+class ProductImage(models.Model):
+    product = models.ForeignKey(
+        Product,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(upload_to="products/")
+    is_default = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return f"Image for {self.product.name} (default={self.is_default})"
+    def __str__(self):
+        return f"Image for {self.product.name} (default={self.is_default})"
 
 
-# class CategoryImage(models.Model):
-#     category = models.ForeignKey(
-#         Category,
-#         on_delete=models.CASCADE,
-#         related_name="images",
-#     )
-#     image = models.ImageField(upload_to="categories/")
-#     is_default = models.BooleanField(default=False)
+class CategoryImage(models.Model):
+    category = models.ForeignKey(
+        Category,
+        on_delete=models.CASCADE,
+        related_name="images",
+    )
+    image = models.ImageField(upload_to="categories/")
+    is_default = models.BooleanField(default=False)
 
-#     def __str__(self):
-#         return f"Image for {self.category.name} (default={self.is_default})"
+    def __str__(self):
+        return f"Image for {self.category.name} (default={self.is_default})"
 
 
 class Inventory(models.Model):

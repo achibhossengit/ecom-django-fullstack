@@ -1,9 +1,80 @@
 {% extends "core/layouts/manager_dashboard.html" %}
+{% load static %}
 
 {% block content %}
-<form action="" method="post" class="">
+<form action="" method="post" enctype="multipart/form-data">
     {% csrf_token %}
     {{form.as_fancy}}
+
+        <!-- 🔹 Image Section -->
+    <div class="flex flex-col my-2">
+        <label class="label">Images</label>
+
+        <!-- Upload Box -->
+        <div id="dropZone"
+             class="border border-dashed border-base-300 rounded-lg p-5 text-center cursor-pointer bg-base-200 hover:bg-base-300 transition"
+             onclick="document.getElementById('images').click()">
+
+            <input id="images" name="images" type="file" accept="image/*" multiple class="hidden">
+            <p>Click to upload images</p>
+        </div>
+
+        <!-- 🔹 Existing Images (ONLY for edit page) -->
+        {% if object and object.images.all %}
+        <div id="existingImages"
+             style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+
+            {% for img in object.images.all %}
+            <div data-id="{{ img.id }}"
+                 style="position:relative; width:64px; height:64px; flex-shrink:0;">
+
+                <img src="{{ img.image.url }}"
+                     style="width:64px;height:64px;object-fit:cover;
+                            border-radius:8px;border:1px solid #e5e7eb;">
+
+                <button type="button"
+                        class="remove-existing"
+                        style="position:absolute; top:-6px; right:-6px;
+                               width:18px; height:18px;
+                               border-radius:50%;
+                               background:#fff;
+                               border:1px solid #d1d5db;
+                               cursor:pointer;
+                               font-size:10px;
+                               display:flex;
+                               align-items:center;
+                               justify-content:center;">
+                    ✕
+                </button>
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+
+        <!-- 🔹 New Upload Preview -->
+        <div id="previewStrip"
+             style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
+
+        <!-- Count -->
+        <p id="countBadge"
+           style="display:none; font-size:12px; margin-top:6px;"></p>
+
+        {% block extra_js %}
+            <script src="{% static 'js/image_upload_preview.js' %}"></script>
+
+            <script>
+            initImageUpload({
+                inputId: 'images',
+                stripId: 'previewStrip',
+                dropZoneId: 'dropZone',
+                countBadgeId: 'countBadge',
+
+                // optional → only works if element exists
+                existingContainerId: 'existingImages',
+            });
+            </script>
+        {% endblock %}
+    </div>
     
     <div class="my-5 flex gap-5">
         <a href="{% url "product_detail" product.pk %}" class="btn btn-primary btn-outline">Cancel</a>

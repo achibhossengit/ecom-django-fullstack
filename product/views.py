@@ -5,7 +5,7 @@ from django.db.models import Count
 from django.contrib.auth import get_user_model
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .forms import ProductModelForm, CategoryModelForm
-from .models import Product, Category, Inventory, PriceHistory, QuantityHistory
+from .models import Product, Category, Inventory, PriceHistory, QuantityHistory, CategoryImage, ProductImage
 
 
 # =====================
@@ -19,6 +19,14 @@ class CategoryAddView(CreateView):
     form_class = CategoryModelForm
     template_name = "manager_dashboard/category_add.html"
     success_url = reverse_lazy("category_list")
+    
+    def form_valid(self, form):
+        obj = form.save()
+        images = self.request.FILES.getlist('images')
+        for image in images:
+            CategoryImage.objects.create(category=obj, image=image)
+
+        return super().form_valid(form)
 
 class CategoryDetailView(DetailView):
     model = Category
@@ -31,6 +39,22 @@ class CategoryEditView(UpdateView):
     
     def get_success_url(self):
         return reverse_lazy("category_detail", kwargs={"pk": self.object.pk})
+
+    def form_valid(self, form):
+        obj = form.save()
+        
+        # 1. Deleted images
+        deleted_ids = self.request.POST.getlist("delete_images")
+        if deleted_ids:
+            for img in CategoryImage.objects.filter(id__in=deleted_ids, category=obj):
+                img.delete()  # calls model.delete(), triggers signal
+
+        # 2. New uploaded images
+        new_images = self.request.FILES.getlist("images")
+        for img in new_images:
+            CategoryImage.objects.create(category=obj, image=img)
+
+        return super().form_valid(form)
 
 class CategoryRemoveView(DeleteView):
     queryset = Category.objects.annotate(product_count=Count("products"))
@@ -51,21 +75,27 @@ class ProductAddView(CreateView):
     success_url = reverse_lazy("product_list")
     
     def form_valid(self, form):
-        user_id = self.request.user.id
         price = form.cleaned_data.pop("price")
         quantity = form.cleaned_data.pop("quantity")
+        images = self.request.FILES.getlist('images')
+
+        print(f"product images for adding: {images}")
+        
+
+        user_id = self.request.user.id
+        obj = form.save(commit=False)
+        obj.created_by = user_id
+        obj.sku = f"{obj.name[:3].upper()}-{uuid.uuid4().hex[:6]}"
 
         with transaction.atomic():
-            obj = form.save(commit=False)
-            obj.created_by = user_id
-            obj.sku = f"{obj.name[:3].upper()}-{uuid.uuid4().hex[:6]}"
             obj.save()
-
             Inventory.objects.create(
                 product=obj,
                 quantity=quantity,
                 price=price
             )
+            for image in images:
+                ProductImage.objects.create(product=obj, image=image)
 
         return super().form_valid(form)
 
@@ -132,6 +162,18 @@ class ProductEditView(UpdateView):
                     quantity_changed=quantity - prev_quantity,
                     created_by = user_id,
                 )
+                
+            # 1. Deleted images
+            deleted_ids = self.request.POST.getlist("delete_images")
+            if deleted_ids:
+                for img in ProductImage.objects.filter(id__in=deleted_ids, product=product):
+                    img.delete()  # calls model.delete(), triggers signal
+
+            # 2. New uploaded images
+            new_images = self.request.FILES.getlist("images")
+            print(f"new images for edit: {new_images}")
+            for img in new_images:
+                ProductImage.objects.create(product=product, image=img)
 
         return super().form_valid(form)
 

@@ -3,11 +3,45 @@
 {% block content %}
 <div class="max-w-3xl mx-auto">
     <!-- Image placeholder -->
-    <div class="w-full h-48 bg-gray-100 flex items-center justify-center mb-4">
-        <img src="#" 
-             alt="Product Image" 
-             class="object-cover h-full w-full">
+    {% with images=product.images.all %}
+    {% if images %}
+
+    <!-- Carousel -->
+    <div class="carousel w-full h-64 rounded-xl mb-4">
+        {% for image in images %}
+        <div id="slide-{{ forloop.counter }}" class="carousel-item relative w-full">
+            <img src="{{ image.image.url }}"
+                 alt="{{ category.name }} image {{ forloop.counter }}"
+                 class="w-full object-cover rounded-xl" />
+
+            {% if images|length > 1 %}
+            <div class="absolute left-5 right-5 top-1/2 -translate-y-1/2 flex justify-between">
+                <a href="#slide-{% if forloop.first %}{{ images|length }}{% else %}{{ forloop.counter|add:'-1' }}{% endif %}"
+                   class="btn btn-circle btn-sm opacity-75">&#8249;</a>
+                <a href="#slide-{% if forloop.last %}1{% else %}{{ forloop.counter|add:'1' }}{% endif %}"
+                   class="btn btn-circle btn-sm opacity-75">&#8250;</a>
+            </div>
+            {% endif %}
+        </div>
+        {% endfor %}
     </div>
+
+    <!-- Dot indicators -->
+    {% if images|length > 1 %}
+    <div class="flex justify-center gap-2 mb-4">
+        {% for image in images %}
+        <a href="#slide-{{ forloop.counter }}" class="btn btn-xs btn-circle">{{ forloop.counter }}</a>
+        {% endfor %}
+    </div>
+    {% endif %}
+
+    {% else %}
+    <!-- No image fallback -->
+    <div class="w-full h-64 bg-base-200 flex items-center justify-center rounded-xl mb-4 text-base-content/40">
+        <span>No images available</span>
+    </div>
+    {% endif %}
+    {% endwith %}
 
     <!-- Product info -->
     <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ product.name }}</h2>
