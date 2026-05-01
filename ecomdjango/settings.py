@@ -20,6 +20,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.humanize',
     'debug_toolbar',
 
@@ -39,6 +41,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    "whitenoise.middleware.WhiteNoiseMiddleware",
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -105,17 +108,26 @@ USE_TZ = True
 
 
 # ===============
-# Staticfiles Config
+# Staticfiles & mediafiles Config
 # ==============
 STATIC_URL = '/static/'
 STATIC_ROOT = BASE_DIR/'staticfiles'
 STATICFILES_DIRS = [BASE_DIR/"static"]
-
-# ==================
-# Mediafiles Config
-# =================
-MEDIA_URL = '/media/'
-MEDIA_ROOT = BASE_DIR/'mediafiles'
+MEDIA_URL = '/dcom/'
+# MEDIA_ROOT = BASE_DIR/'mediafiles'
+STORAGES = {
+    "default": {
+        "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+    },
+    "staticfiles": {
+        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+    },
+}
+CLOUDINARY_STORAGE = {
+    "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
+    "API_KEY": config("CLOUDINARY_API_KEY"),
+    "API_SECRET": config("CLOUDINARY_API_SECRET"),
+}
 
 
 # anymail config
