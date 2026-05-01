@@ -13,11 +13,11 @@ from .models import Product, Category, Inventory, PriceHistory, QuantityHistory,
 # =====================
 class CategoryListView(ListView):
     queryset = Category.objects.annotate(product_count=Count('products'))
-    template_name = "manager_dashboard/category_list.html"
+    template_name = "pages/manager_dashboard/category_list.html"
     
 class CategoryAddView(CreateView):
     form_class = CategoryModelForm
-    template_name = "manager_dashboard/category_add.html"
+    template_name = "pages/manager_dashboard/category_add.html"
     success_url = reverse_lazy("category_list")
     
     def form_valid(self, form):
@@ -30,12 +30,12 @@ class CategoryAddView(CreateView):
 
 class CategoryDetailView(DetailView):
     model = Category
-    template_name = "manager_dashboard/category_detail.html"
+    template_name = "pages/manager_dashboard/category_detail.html"
 
 class CategoryEditView(UpdateView):
     model = Category
     form_class = CategoryModelForm
-    template_name = "manager_dashboard/category_edit.html"
+    template_name = "pages/manager_dashboard/category_edit.html"
     
     def get_success_url(self):
         return reverse_lazy("category_detail", kwargs={"pk": self.object.pk})
@@ -58,7 +58,7 @@ class CategoryEditView(UpdateView):
 
 class CategoryRemoveView(DeleteView):
     queryset = Category.objects.annotate(product_count=Count("products"))
-    template_name = "manager_dashboard/category_remove.html"
+    template_name = "pages/manager_dashboard/category_remove.html"
     success_url = reverse_lazy("category_list")
 
 
@@ -67,11 +67,11 @@ class CategoryRemoveView(DeleteView):
 # ==============================
 class ProductListView(ListView):
     queryset = Product.objects.select_related('category').select_related('inventory').all()
-    template_name = "manager_dashboard/product_list.html"
+    template_name = "pages/manager_dashboard/product_list.html"
     
 class ProductAddView(CreateView):
     form_class = ProductModelForm
-    template_name = "manager_dashboard/product_add.html"
+    template_name = "pages/manager_dashboard/product_add.html"
     success_url = reverse_lazy("product_list")
     
     def form_valid(self, form):
@@ -101,7 +101,7 @@ class ProductAddView(CreateView):
 
 class ProductDetailView(DetailView):
     queryset = Product.objects.select_related('inventory', 'category').all()
-    template_name = "manager_dashboard/product_detail.html"
+    template_name = "pages/manager_dashboard/product_detail.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -117,7 +117,7 @@ class ProductEditView(UpdateView):
     model = Product
     queryset = Product.objects.select_related('inventory').all()
     form_class = ProductModelForm
-    template_name = "manager_dashboard/product_edit.html"
+    template_name = "pages/manager_dashboard/product_edit.html"
 
     def get_success_url(self):
         return reverse_lazy("product_detail", kwargs={"pk": self.object.pk})
@@ -179,5 +179,5 @@ class ProductEditView(UpdateView):
 
 class ProductRemoveView(DeleteView):
     model = Product
-    template_name = "manager_dashboard/product_remove.html"
+    template_name = "pages/manager_dashboard/product_remove.html"
     success_url = reverse_lazy("product_list")

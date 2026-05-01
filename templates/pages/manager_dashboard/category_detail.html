@@ -1,9 +1,9 @@
-{% extends "manager_dashboard/manager_dashboard.html" %}
+{% extends "layouts/manager_dashboard.html" %}
 
-{% block content %}
+{% block content_body %}
 <div class="max-w-3xl mx-auto">
-    <!-- Image placeholder -->
-    {% with images=product.images.all %}
+
+    {% with images=category.images.all %}
     {% if images %}
 
     <!-- Carousel -->
@@ -37,60 +37,34 @@
 
     {% else %}
     <!-- No image fallback -->
-    <div class="w-full h-64 bg-base-200 flex items-center justify-center rounded-xl mb-4 text-base-content/40">
+    <div class="w-full h-64 bg-base-200 flex items-center justify-center rounded-xl mb-4 text-base-_body/40">
         <span>No images available</span>
     </div>
     {% endif %}
     {% endwith %}
 
-    <!-- Product info -->
-    <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ product.name }}</h2>
-    <p class="text-gray-600 mb-4">{{ product.description }}</p>
-
-    <!-- Meta info -->
-    <div class="grid grid-cols-2 gap-4 text-sm text-gray-700 mb-6">
-        <div>
-            <span class="font-medium">SKU:</span> {{ product.sku }}
-        </div>
-        <div>
-            <span class="font-medium">Category:</span> 
-            {% if product.category %}
-                {{ product.category.name }}
-            {% else %}
-                <span class="italic text-gray-500">No category</span>
-            {% endif %}
-        </div>
-        <div>
-            <span class="font-medium">Added By :</span> {{ created_by_name }}
-        </div>
-        <div>
-            <span class="font-medium">Created At:</span> {{ product.created_at|date:"M d, Y H:i" }}
-        </div>
-        <div>
-            <span class="font-medium">Updated At:</span> {{ product.updated_at|date:"M d, Y H:i" }}
-        </div>
-        <p><a href="#" class="text-primary"> <span class="font-medium">Quantity:</span> {{ product.inventory.quantity }}</a></p>
-        <p><a href="#" class="text-primary"><span class="font-medium">Price:</span> ${{ product.inventory.price }}</a></p>
-    </div>
+    <!-- Category info -->
+    <h2 class="text-2xl font-semibold text-gray-800 mb-2">{{ category.name }}</h2>
+    <p class="text-gray-600 mb-6">{{ category.description }}</p>
 
     <!-- Action buttons -->
     <div class="flex justify-between gap-4 my-5">
-        <div >
-            <a href="{% url 'product_list' %}" 
+        <div>
+            <a href="{% url 'category_list' %}"
                class="btn btn-ghost btn-outline">
-                Show All Products
+                Show Category List
             </a>
         </div>
         <div class="flex justify-end gap-4">
-            <a href="{% url 'product_edit' product.id %}" 
+            <a href="{% url 'category_edit' category.id %}"
                class="btn btn-primary btn-outline">
-                Edit Product
+                Edit Category
             </a>
-            <a href="{% url 'product_remove' product.id %}" 
+            <a href="{% url 'category_remove' category.id %}"
                class="btn btn-error btn-outline">
-                Remove
+                Delete
             </a>
         </div>
     </div>
 </div>
-{% endblock content %}
+{% endblock content_body %}

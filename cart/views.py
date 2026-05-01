@@ -58,7 +58,7 @@ class AddToCartView(View):
 
 
 class CartView(TemplateView):
-    template_name = "my_dashboard/my_cart.html"
+    template_name = "pages/my_dashboard/my_cart.html"
 
     def get_context_data(self, **kwargs):
         request = self.request

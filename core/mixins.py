@@ -37,7 +37,7 @@ class FancyFieldMixin:
             widget.attrs["class"] = f"{existing} {css} {self.base_class}".strip()
 
 class FancyFormMixin:
-    fancy_template = "core/forms/fancy_form.html"
+    fancy_template = "includes/fancy_form.html"
 
     def as_fancy(self):
         return render_to_string(

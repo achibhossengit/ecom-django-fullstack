@@ -13,22 +13,20 @@
 </head>
 <body>
     {% block navbar %}
-      {% include 'core/includes/navbar.html' %}
+      {% include 'includes/navbar.html' %}
     {% endblock navbar %}
 
     {% block message %}
-      {% include "core/includes/flush_message.html" %}
+      {% include "includes/flush_message.html" %}
     {% endblock message %}
     
     {% block body %}
-    <div>
-      {% block content %} {% endblock content%}
-    </div>
+    
     {% endblock body %}
     
     {% block footer %}
       <footer>
-        {% include "core/includes/footer.html" %}
+        {% include "includes/footer.html" %}
       </footer>
     {% endblock footer %}
     <script src={% static "js/theme_controller.js" %}></script>

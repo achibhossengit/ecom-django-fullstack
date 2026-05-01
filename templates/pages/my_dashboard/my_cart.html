@@ -1,8 +1,6 @@
-{% extends "my_dashboard/my_dashboard.html" %} {% block content %}
-<div class="flex flex-col gap-10 space-y-10">
-  <div class="card bg-base-100 border border-base-content/10 mb-4">
-    <div class="card-body p-0">
-      <div class="p-5">
+{% extends "layouts/my_dashboard.html" %} {% block content %}
+    <div class="">
+      <div >
         <h2 class="text-xl font-semibold mb-4">My Cart</h2>
         {% if cart_items %}
         <table class="table w-full">
@@ -188,6 +186,4 @@
         {% endif %}
       </div>
     </div>
-  </div>
-</div>
 {% endblock content %}

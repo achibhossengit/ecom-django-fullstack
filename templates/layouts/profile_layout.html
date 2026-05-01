@@ -1,0 +1,35 @@
+{% extends "layouts/my_dashboard.html" %} 
+
+{% block content_header %}
+<div class="my-5 flex justify-start gap-5">
+    <a href="{% url 'my_profile' %}" 
+       class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'my_profile' %}btn-active{% endif %}">
+       Profile Info
+    </a>
+
+    <a href="{% url 'account_email' %}" 
+       class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'account_email' %}btn-active{% endif %}">
+       Manage Email
+    </a>
+
+    <a href="{% url 'account_change_password' %}" 
+        class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'account_change_password' or request.resolver_match.url_name == 'account_set_password' %}btn-active{% endif %}">
+        Change Password
+    </a>
+
+
+    <a href="#" 
+       class="btn btn-outline btn-sm btn-error {% if request.resolver_match.url_name == 'account_delete' %}btn-active{% endif %}">
+       Delete Account
+    </a>
+</div>
+{% endblock content_header %}
+
+<div class="card bg-base-100 border border-base-content/10 mb-4">
+    <div class="card-body p-0">
+        <div class="p-5">
+            {% block content %}
+            {% endblock content %}
+        </div>
+    </div>
+</div>

@@ -1,4 +1,4 @@
-{% extends "allauth/layouts/base.html" %}
+{% extends "layouts/base.html" %}
 {% load allauth %}
 
 {% block body %}
@@ -8,11 +8,13 @@
     <!-- Sidebar -->
     <aside class="w-full md:w-56 shrink-0 bg-base-300 md:rounded-r-2xl flex flex-col">
 
-      <div class="px-4 pt-5 pb-2">
-        <span class="text-xs font-semibold uppercase tracking-widest opacity-40">
-          Manage Account
-        </span>
-      </div>
+      {% block sidebar_header %}
+        <div class="px-4 pt-5 pb-2">
+          <span class="text-xs font-semibold uppercase tracking-widest opacity-40">
+            Manage Account
+          </span>
+        </div>
+      {% endblock sidebar_header %}
 
       <ul class="menu menu-sm gap-0.5 px-3 pb-3 flex-1">
         {% block aside_links %}
@@ -64,7 +66,7 @@
 
         <div class="divider"></div>
 
-        {% url 'user_profile' as profile_url %}
+        {% url 'my_profile' as profile_url %}
         {% if profile_url %}
         <li>
           <a href="{{ profile_url }}" class="{% if request.path == profile_url %}active font-medium{% endif %}">
@@ -90,7 +92,16 @@
 
     <!-- Main Content -->
     <main class="flex-1 p-5 bg-base-300 md:rounded-l-2xl overflow-y-auto">
-      {% block content %}{% endblock %}
+      {% block content_header %}{% endblock content_header %}
+      {% block content_body %}
+        <div class="card bg-base-100 border border-base-content/10 mb-4">
+          <div class="card-body p-0">
+              <div class="p-5">
+                {% block content %}{% endblock content %}
+              </div>
+          </div>
+      </div>
+      {% endblock content_body %}
     </main>
 
   </div>

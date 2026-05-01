@@ -25,7 +25,7 @@
         {% include "./navlinks.html" %}
       </ul>
     </div>
-    {% include "core/includes/logo.html" %}
+    {% include "includes/logo.html" %}
   </div>
 
   <div class="navbar-center hidden lg:flex">
@@ -36,14 +36,14 @@
   <div class="navbar-end gap-2">
     {% comment %} theme controller {% endcomment %}
 
-    {% include "core/includes/theme_controller.html" %}
+    {% include "includes/theme_controller.html" %}
 
 
     <div class="flex justify-around gap-2">
       {% if user.is_authenticated %}
         <div class="flex gap-2 items-center justify-end">
-          {% include "core/includes/nav_cart_icon.html" %}
-          {% include "core/includes/nav_profile_icon.html" %}
+          {% include "includes/nav_cart_icon.html" %}
+          {% include "includes/nav_profile_icon.html" %}
         </div>
       {% else %}
         <div class="flex justify-around gap-2">

@@ -1,0 +1,17 @@
+{% extends "layouts/profile_layout.html" %} 
+{% block content %}
+  <form method="post" action="{% url 'my_profile' %}">
+      {% csrf_token %} 
+
+      {{ form.as_fancy }}
+
+    <div class="divider my-4"></div>
+    <div class="flex justify-between items-center gap-2">
+      <div>
+        <button type="submit" class="btn btn-primary btn-sm">
+          Save changes
+        </button>
+      </div>
+    </div>
+  </form>
+{% endblock content %}
