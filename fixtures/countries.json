@@ -1,0 +1,42 @@
+[
+  {
+    "model": "core.country",
+    "pk": 1,
+    "fields": {
+      "name_en": "Bangladesh",
+      "name_bn": "বাংলাদেশ"
+    }
+  },
+  {
+    "model": "core.country",
+    "pk": 2,
+    "fields": {
+      "name_en": "India",
+      "name_bn": "ভারত"
+    }
+  },
+  {
+    "model": "core.country",
+    "pk": 3,
+    "fields": {
+      "name_en": "United States",
+      "name_bn": "যুক্তরাষ্ট্র"
+    }
+  },
+  {
+    "model": "core.country",
+    "pk": 4,
+    "fields": {
+      "name_en": "United Kingdom",
+      "name_bn": "যুক্তরাজ্য"
+    }
+  },
+  {
+    "model": "core.country",
+    "pk": 5,
+    "fields": {
+      "name_en": "Canada",
+      "name_bn": "কানাডা"
+    }
+  }
+]

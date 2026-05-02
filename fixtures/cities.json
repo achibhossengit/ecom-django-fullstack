@@ -1,0 +1,578 @@
+[
+    {
+        "model": "core.city",
+        "pk": 2,
+        "fields": {
+            "country": 1,
+            "name_en": "Dhaka",
+            "name_bn": "ঢাকা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 4,
+        "fields": {
+            "country": 1,
+            "name_en": "Rajshahi",
+            "name_bn": "রাজশাহী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 53,
+        "fields": {
+            "country": 1,
+            "name_en": "Cox's Bazar",
+            "name_bn": "কক্সবাজার"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 6,
+        "fields": {
+            "country": 1,
+            "name_en": "Khulna",
+            "name_bn": "খুলনা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 13,
+        "fields": {
+            "country": 1,
+            "name_en": "Kishoreganj",
+            "name_bn": "কিশোরগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 5,
+        "fields": {
+            "country": 1,
+            "name_en": "Sylhet",
+            "name_bn": "সিলেট"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 8,
+        "fields": {
+            "country": 1,
+            "name_en": "Rangpur",
+            "name_bn": "রংপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 36,
+        "fields": {
+            "country": 1,
+            "name_en": "Kurigram",
+            "name_bn": "কুড়িঁগ্রাম"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 52,
+        "fields": {
+            "country": 1,
+            "name_en": "Cumilla",
+            "name_bn": "কুমিল্লা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 68,
+        "fields": {
+            "country": 1,
+            "name_en": "Kushtia",
+            "name_bn": "কুষ্টিয়া"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 55,
+        "fields": {
+            "country": 1,
+            "name_en": "Khagrachari",
+            "name_bn": "খাগড়াছড়ি"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 35,
+        "fields": {
+            "country": 1,
+            "name_en": "Gaibandha",
+            "name_bn": "গাইবান্ধা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 10,
+        "fields": {
+            "country": 1,
+            "name_en": "Gazipur",
+            "name_bn": "গাজীপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 11,
+        "fields": {
+            "country": 1,
+            "name_en": "Gopalganj",
+            "name_bn": "গোপালগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 3,
+        "fields": {
+            "country": 1,
+            "name_en": "Chattogram",
+            "name_bn": "চট্টগ্রাম"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 50,
+        "fields": {
+            "country": 1,
+            "name_en": "Chandpur",
+            "name_bn": "চাঁদপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 30,
+        "fields": {
+            "country": 1,
+            "name_en": "Chapai Nawabganj",
+            "name_bn": "চাঁপাইনবাবগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 64,
+        "fields": {
+            "country": 1,
+            "name_en": "Chuadanga",
+            "name_bn": "চুয়াডাঙ্গা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 27,
+        "fields": {
+            "country": 1,
+            "name_en": "Joypurhat",
+            "name_bn": "জয়পুরহাট"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 12,
+        "fields": {
+            "country": 1,
+            "name_en": "Jamalpur",
+            "name_bn": "জামালপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 45,
+        "fields": {
+            "country": 1,
+            "name_en": "Jhalokati",
+            "name_bn": "ঝালকাঠি"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 66,
+        "fields": {
+            "country": 1,
+            "name_en": "Jhenaidah",
+            "name_bn": "ঝিনাইদহ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 25,
+        "fields": {
+            "country": 1,
+            "name_en": "Tangail",
+            "name_bn": "টাঙ্গাইল"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 41,
+        "fields": {
+            "country": 1,
+            "name_en": "Thakurgaon",
+            "name_bn": "ঠাকুরগাঁও"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 34,
+        "fields": {
+            "country": 1,
+            "name_en": "Dinajpur",
+            "name_bn": "দিনাজপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 28,
+        "fields": {
+            "country": 1,
+            "name_en": "Naogaon",
+            "name_bn": "নওগাঁ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 71,
+        "fields": {
+            "country": 1,
+            "name_en": "Narail",
+            "name_bn": "নড়াইল"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 20,
+        "fields": {
+            "country": 1,
+            "name_en": "Narsingdi",
+            "name_bn": "নরসিংদী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 29,
+        "fields": {
+            "country": 1,
+            "name_en": "Natore",
+            "name_bn": "নাটোর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 18,
+        "fields": {
+            "country": 1,
+            "name_en": "Narayanganj",
+            "name_bn": "নারায়ণগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 38,
+        "fields": {
+            "country": 1,
+            "name_en": "Nilphamari",
+            "name_bn": "নীলফামারী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 21,
+        "fields": {
+            "country": 1,
+            "name_en": "Netrokona",
+            "name_bn": "নেত্রকোনা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 57,
+        "fields": {
+            "country": 1,
+            "name_en": "Noakhali",
+            "name_bn": "নোয়াখালী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 39,
+        "fields": {
+            "country": 1,
+            "name_en": "Panchagarh",
+            "name_bn": "পঞ্চগড়"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 46,
+        "fields": {
+            "country": 1,
+            "name_en": "Patuakhali",
+            "name_bn": "পটুয়াখালী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 31,
+        "fields": {
+            "country": 1,
+            "name_en": "Pabna",
+            "name_bn": "পাবনা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 47,
+        "fields": {
+            "country": 1,
+            "name_en": "Pirojpur",
+            "name_bn": "পিরোজপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 9,
+        "fields": {
+            "country": 1,
+            "name_en": "Faridpur",
+            "name_bn": "ফরিদপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 54,
+        "fields": {
+            "country": 1,
+            "name_en": "Feni",
+            "name_bn": "ফেনী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 26,
+        "fields": {
+            "country": 1,
+            "name_en": "Bogura",
+            "name_bn": "বগুড়া"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 42,
+        "fields": {
+            "country": 1,
+            "name_en": "Barguna",
+            "name_bn": "বরগুনা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 43,
+        "fields": {
+            "country": 1,
+            "name_en": "Barishal",
+            "name_bn": "বরিশাল"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 63,
+        "fields": {
+            "country": 1,
+            "name_en": "Bagerhat",
+            "name_bn": "বাগেরহাট"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 48,
+        "fields": {
+            "country": 1,
+            "name_en": "Bandarban",
+            "name_bn": "বান্দরবান"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 49,
+        "fields": {
+            "country": 1,
+            "name_en": "Brahmanbaria",
+            "name_bn": "ব্রাহ্মণবাড়িয়া"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 44,
+        "fields": {
+            "country": 1,
+            "name_en": "Bhola",
+            "name_bn": "ভোলা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 17,
+        "fields": {
+            "country": 1,
+            "name_en": "Mymensingh",
+            "name_bn": "ময়মনসিংহ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 69,
+        "fields": {
+            "country": 1,
+            "name_en": "Magura",
+            "name_bn": "মাগুরা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 14,
+        "fields": {
+            "country": 1,
+            "name_en": "Madaripur",
+            "name_bn": "মাদারীপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 15,
+        "fields": {
+            "country": 1,
+            "name_en": "Manikganj",
+            "name_bn": "মানিকগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 16,
+        "fields": {
+            "country": 1,
+            "name_en": "Munshiganj",
+            "name_bn": "মুন্সিগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 70,
+        "fields": {
+            "country": 1,
+            "name_en": "Meherpur",
+            "name_bn": "মেহেরপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 60,
+        "fields": {
+            "country": 1,
+            "name_en": "Moulvibazar",
+            "name_bn": "মৌলভী বাজার"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 65,
+        "fields": {
+            "country": 1,
+            "name_en": "Jessore",
+            "name_bn": "যশোর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 58,
+        "fields": {
+            "country": 1,
+            "name_en": "Rangamati",
+            "name_bn": "রাঙ্গামাটি"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 22,
+        "fields": {
+            "country": 1,
+            "name_en": "Rajbari",
+            "name_bn": "রাজবাড়ী"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 56,
+        "fields": {
+            "country": 1,
+            "name_en": "Lakshmipur",
+            "name_bn": "লক্ষ্মীপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 37,
+        "fields": {
+            "country": 1,
+            "name_en": "Lalmonirhat",
+            "name_bn": "লালমনিরহাট"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 23,
+        "fields": {
+            "country": 1,
+            "name_en": "Shariatpur",
+            "name_bn": "শরিয়তপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 24,
+        "fields": {
+            "country": 1,
+            "name_en": "Sherpur",
+            "name_bn": "শেরপুর"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 72,
+        "fields": {
+            "country": 1,
+            "name_en": "Satkhira",
+            "name_bn": "সাতক্ষীরা"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 33,
+        "fields": {
+            "country": 1,
+            "name_en": "Sirajganj",
+            "name_bn": "সিরাজগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 61,
+        "fields": {
+            "country": 1,
+            "name_en": "Sunamganj",
+            "name_bn": "সুনামগঞ্জ"
+        }
+    },
+    {
+        "model": "core.city",
+        "pk": 59,
+        "fields": {
+            "country": 1,
+            "name_en": "Habiganj",
+            "name_bn": "হবিগঞ্জ"
+        }
+    }
+]
