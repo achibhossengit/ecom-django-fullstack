@@ -1,28 +1,37 @@
 {% extends "layouts/my_dashboard.html" %} 
 
 {% block content_header %}
+{% with current_url=request.resolver_match.url_name %}
 <div class="my-5 flex justify-start gap-5">
     <a href="{% url 'my_profile' %}" 
-       class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'my_profile' %}btn-active{% endif %}">
-       Profile Info
+    class="btn btn-ghost btn-sm btn-outline {% if current_url == 'my_profile' %}btn-active{% endif %}">
+    Profile Info
     </a>
 
+    <a href="{% url 'my_addresses' %}"
+    class="btn btn-ghost btn-sm btn-outline 
+    {% if current_url == 'my_addresses' or current_url == 'my_addresses_add' or current_url == 'my_addresses_edit' or current_url == 'my_addresses_remove' %}btn-active{% endif %}"> 
+    Manage Addresses 
+    </a>
+
+
     <a href="{% url 'account_email' %}" 
-       class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'account_email' %}btn-active{% endif %}">
-       Manage Email
+    class="btn btn-ghost btn-sm btn-outline {% if current_url == 'account_email' %}btn-active{% endif %}">
+    Manage Email
     </a>
 
     <a href="{% url 'account_change_password' %}" 
-        class="btn btn-ghost btn-sm btn-outline {% if request.resolver_match.url_name == 'account_change_password' or request.resolver_match.url_name == 'account_set_password' %}btn-active{% endif %}">
-        Change Password
+    class="btn btn-ghost btn-sm btn-outline {% if current_url == 'account_change_password' or current_url == 'account_set_password' %}btn-active{% endif %}">
+    Change Password
     </a>
 
 
     <a href="#" 
-       class="btn btn-outline btn-sm btn-error {% if request.resolver_match.url_name == 'account_delete' %}btn-active{% endif %}">
-       Delete Account
+    class="btn btn-outline btn-sm btn-error {% if current_url == 'account_delete' %}btn-active{% endif %}">
+    Delete Account
     </a>
 </div>
+{% endwith %}
 {% endblock content_header %}
 
 <div class="card bg-base-100 border border-base-content/10 mb-4">

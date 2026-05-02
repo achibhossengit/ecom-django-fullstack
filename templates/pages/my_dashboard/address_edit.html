@@ -1,0 +1,268 @@
+{% extends "layouts/profile_layout.html" %}
+
+{% block content %}
+<div class="flex flex-col gap-6">
+  <div class="card">
+    <div class="card-body p-0">
+
+        {# Header #}
+        <div class="mb-6">
+          <h2 class="text-xl font-semibold">
+            {% if form.initial %}Edit Address{% else %}Add New Address{% endif %}
+          </h2>
+          <p class="text-sm text-base-content/50 mt-0.5">
+            {% if form.initial %}
+              Update your shipping address details
+            {% else %}
+              Fill in the details for your new shipping address
+            {% endif %}
+          </p>
+        </div>
+
+        {# Messages #}
+        {% if messages %}
+          {% for message in messages %}
+            <div class="alert {% if message.tags == 'error' %}alert-error{% else %}alert-success{% endif %} mb-4 text-sm py-2">
+              {{ message }}
+            </div>
+          {% endfor %}
+        {% endif %}
+
+          {# Form #}
+        <form method="post" action="">
+          {% csrf_token %}
+
+          <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+            {# Name #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Name</span>
+              </label>
+              {{ form.name }}
+              {% if form.name.errors %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.name.errors|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# Phone #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Phone Number</span>
+              </label>
+              {{ form.phone_number }}
+              {% if form.phone_number.errors %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.phone_number.errors|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# Type #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Address Type</span>
+              </label>
+              {{ form.type }}
+              {% if form.type.errors %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.type.errors|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+
+            {# Country #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Country</span>
+              </label>
+              <select id="id_country" required name="country_id" data-init="{{ form.initial.country_id }}" class="select select-bordered select-sm w-full"></select>
+              {% if form.errors.country_id %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.errors.country_id|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# City #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">City</span>
+              </label>
+              <select id="id_city" required name="city_id" data-init="{{ form.initial.city_id }}" class="select select-bordered select-sm w-full"></select>
+              {% if form.errors.city_id %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.errors.city_id|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# Area #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Area</span>
+              </label>
+              <select id="id_area" required name="area_id" data-init="{{ form.initial.area_id }}" class="select select-bordered select-sm w-full"></select>
+              {% if form.errors.area_id %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.errors.area_id|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# Zone #}
+            <div class="form-control w-full">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Zone</span>
+              </label>
+              <select id="id_zone" name="zone_id" data-init="{{ form.initial.zone_id }}" class="select select-bordered select-sm w-full"></select>
+              {% if form.errors.zone_id %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.errors.zone_id|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+            {# Description — full width #}
+            <div class="form-control w-full sm:col-span-2">
+              <label class="label pb-1">
+                <span class="label-text text-sm font-medium">Address Details</span>
+              </label>
+              {{ form.description }}
+              {% if form.description.errors %}
+                <label class="label pt-1">
+                  <span class="label-text-alt text-error">{{ form.description.errors|join:", " }}</span>
+                </label>
+              {% endif %}
+            </div>
+
+          </div>
+
+          {# Non-field errors #}
+          {% if form.non_field_errors %}
+            <div class="alert alert-error mt-4 text-sm py-2">
+              {{ form.non_field_errors|join:", " }}
+            </div>
+          {% endif %}
+
+          <div class="divider my-4"></div>
+
+          <div class="flex justify-between items-center gap-2">
+            <a href="{% url 'my_addresses' %}" class="btn btn-ghost btn-sm">
+              Cancel
+            </a>
+            <button type="submit" class="btn btn-primary btn-sm">
+              {% if address %}Save Changes{% else %}Add Address{% endif %}
+            </button>
+          </div>
+
+        </form>
+
+      </div>
+  </div>
+</div>
+{% endblock content %}
+
+{% block extra_scripts %}
+<script>
+  const COUNTRIES_URL = "{% url 'ajax_load_countries' %}";
+  const CITIES_URL    = "{% url 'ajax_load_cities' %}";
+  const AREAS_URL     = "{% url 'ajax_load_areas' %}";
+  const ZONES_URL     = "{% url 'ajax_load_zones' %}";
+  
+  const INIT_COUNTRY = "{{ form.initial.country_id|default:'' }}";
+  const INIT_CITY    = "{{ form.initial.city_id|default:'' }}";
+  const INIT_AREA    = "{{ form.initial.area_id|default:'' }}";
+  const INIT_ZONE    = "{{ form.initial.zone_id|default:'' }}";
+
+  const countryEl = document.getElementById('id_country');
+  const cityEl    = document.getElementById('id_city');
+  const areaEl    = document.getElementById('id_area');
+  const zoneEl    = document.getElementById('id_zone');
+
+
+  const populateSelect = (selectEl, data, selectedId, placeholder) => {
+    selectEl.innerHTML = `<option value="">-- ${placeholder} --</option>`;
+    data.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.name_bn || item.name_en;
+      if (String(item.id) === String(selectedId)) opt.selected = true;
+      selectEl.appendChild(opt);
+    });
+
+    if (data.length > 0) {
+      selectEl.setAttribute("required", "required");
+    } else {
+      selectEl.removeAttribute("required");
+    }
+
+  };
+
+  const fetchJSON = async (url) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) {
+      console.error('AJAX error:', url, err);
+      return [];
+    }
+  };
+
+  // Country → City
+  countryEl.addEventListener('change', async () => {
+    cityEl.innerHTML = '<option value="">-- Select City --</option>';
+    areaEl.innerHTML = '<option value="">-- Select Area --</option>';
+    zoneEl.innerHTML = '<option value="">-- Select Zone --</option>';
+    if (!countryEl.value) return;
+    const data = await fetchJSON(`${CITIES_URL}?country_id=${countryEl.value}`);
+    populateSelect(cityEl, data, '', 'Select City');
+  });
+
+  // City → Area
+  cityEl.addEventListener('change', async () => {
+    areaEl.innerHTML = '<option value="">-- Select Area --</option>';
+    zoneEl.innerHTML = '<option value="">-- Select Zone --</option>';
+    if (!cityEl.value) return;
+    const data = await fetchJSON(`${AREAS_URL}?city_id=${cityEl.value}`);
+    populateSelect(areaEl, data, '', 'Select Area');
+  });
+
+  // Area → Zone
+  areaEl.addEventListener('change', async () => {
+    zoneEl.innerHTML = '<option value="">-- Select Zone --</option>';
+    if (!areaEl.value) return;
+    const data = await fetchJSON(`${ZONES_URL}?area_id=${areaEl.value}`);
+    populateSelect(zoneEl, data, '', 'Select Zone');
+  });
+
+  // Load all countries
+  const loadCountries = async () => {
+    const countries = await fetchJSON(COUNTRIES_URL);
+    populateSelect(countryEl, countries, INIT_COUNTRY, 'Select Country');
+  };
+
+  // Restore selections for edit mode
+  const restoreSelections = async () => {
+    if (!INIT_COUNTRY) return;
+    const cities = await fetchJSON(`${CITIES_URL}?country_id=${INIT_COUNTRY}`);
+    populateSelect(cityEl, cities, INIT_CITY, 'Select City');
+    if (!INIT_CITY) return;
+    const areas = await fetchJSON(`${AREAS_URL}?city_id=${INIT_CITY}`);
+    populateSelect(areaEl, areas, INIT_AREA, 'Select Area');
+    if (!INIT_AREA) return;
+    const zones = await fetchJSON(`${ZONES_URL}?area_id=${INIT_AREA}`);
+    populateSelect(zoneEl, zones, INIT_ZONE, 'Select Zone');
+  };
+
+  // Initial call
+  (async () => {
+    await loadCountries();
+    await restoreSelections();
+  })();
+</script>
+{% endblock extra_scripts %}

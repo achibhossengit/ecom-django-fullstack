@@ -1,9 +1,11 @@
-from django.contrib.auth.models import User
-from django.core.exceptions import ValidationError
 from django import forms
-from core.mixins import FancyFieldMixin, FancyFormMixin
+from django.contrib.auth import get_user_model
+from core.mixins import FancyFormFieldMixin
+from .models import UserAddress
 
-class UserSignUpForm(forms.Form):
+AuthUser = get_user_model()
+
+class UserSignUpForm(FancyFormFieldMixin, forms.Form):
     first_name = forms.CharField(max_length=30, label="First Name", widget=forms.TextInput(attrs={"placeholder": "Enter your first name"}))
     last_name = forms.CharField(max_length=30, label="Last Name", widget=forms.TextInput(attrs={"placeholder": "Enter your last name"}))
 
@@ -12,7 +14,13 @@ class UserSignUpForm(forms.Form):
         user.last_name = self.cleaned_data['last_name']
         user.save()
 
-class UserUpdateForm(FancyFieldMixin, FancyFormMixin, forms.ModelForm):
+class UserUpdateForm(FancyFormFieldMixin, forms.ModelForm):
     class Meta:
-        model = User
+        model = AuthUser
         fields = ['username', 'first_name', 'last_name']
+ 
+ 
+class UserAddressForm(FancyFormFieldMixin, forms.ModelForm):
+    class Meta:
+        model = UserAddress
+        fields = ['name', 'phone_number', 'description', 'type', 'country_id', 'city_id', 'area_id', 'zone_id']

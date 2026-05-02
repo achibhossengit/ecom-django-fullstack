@@ -1,7 +1,8 @@
+from django.http import JsonResponse
 from django.shortcuts import render
 from product.models import Category, Product
+from .models import Country, City, Area, Zone
 
-# Create your views here.
 def homepage(request):
     hero_product = {
         'name': 'Premium Linen Jacket',
@@ -18,3 +19,29 @@ def homepage(request):
     
     context = {'categories': categories, 'products': products, "hero_product": hero_product}
     return render(request, 'pages/home.html', context=context)
+
+
+def ajax_load_countries(request):
+    countries = list(Country.objects.all().values('id', 'name_en', 'name_bn'))
+    return JsonResponse(countries, safe=False)
+
+def ajax_load_cities(request):
+    country_id = request.GET.get('country_id')
+    if not country_id:
+        return JsonResponse([], safe=False)
+    cities = list(City.objects.filter(country_id=country_id).values('id', 'name_en', 'name_bn'))
+    return JsonResponse(cities, safe=False)
+
+def ajax_load_areas(request):
+    city_id = request.GET.get('city_id')
+    if not city_id:
+        return JsonResponse([], safe=False)
+    areas = list(Area.objects.filter(city_id=city_id).values('id', 'name_en', 'name_bn'))
+    return JsonResponse(areas, safe=False)
+
+def ajax_load_zones(request):
+    area_id = request.GET.get('area_id')
+    if not area_id:
+        return JsonResponse([], safe=False)
+    zones = list(Zone.objects.filter(area_id=area_id).values('id', 'name_en', 'name_bn'))
+    return JsonResponse(zones, safe=False)

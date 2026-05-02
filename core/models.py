@@ -14,7 +14,7 @@ class City(models.Model):
     name_bn = models.CharField(max_length=100)
 
     def __str__(self):
-        return f"{self.name_en}, {self.country.name_en}"
+        return f"{self.name_bn}, {self.country.name_en}"
 
 
 class Area(models.Model):
@@ -33,4 +33,4 @@ class Zone(models.Model):
     postal_code = models.CharField(max_length=20)
 
     def __str__(self):
-        return f"{self.name_en} ({self.postal_code})"
+        return f"{self.name_en}"
