@@ -14,7 +14,7 @@ class UserAddress(models.Model):
     phone_number = models.CharField(max_length=20)
     description = models.TextField(blank=True, null=True)
     type = models.CharField(max_length=50, choices=[("home", "Home"), ("office", "Office"), ("other", "Other")])
-    is_active = models.BooleanField(default=False)
+    is_active = models.BooleanField(default=True)
 
     class Meta:
         constraints = [
@@ -50,6 +50,26 @@ class UserAddress(models.Model):
             pass
 
         return ", ".join(parts)
+
+
+    def save(self, *args, **kwargs):
+        if self.is_active:
+            UserAddress.objects.filter(
+                user=self.user,
+                is_active=True
+            ).exclude(pk=self.pk).update(is_active=False)
+        super().save(*args, **kwargs)
+
+    def delete(self, *args, **kwargs):
+        was_active = self.is_active
+        user = self.user
+        super().delete(*args, **kwargs)
+        if was_active:
+            # Try to activate another address
+            other = UserAddress.objects.filter(user=user).first()
+            if other:
+                other.is_active = True
+                other.save()
 
 
     def __str__(self):
