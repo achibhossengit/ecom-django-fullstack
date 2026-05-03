@@ -1,0 +1,125 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block title %}Rider Applications{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-8 px-4">
+
+  {# ── Header ── #}
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold tracking-tight">Rider Applications</h1>
+    <p class="text-base-content/60 text-sm mt-1">
+      Review and manage all incoming rider applications.
+    </p>
+  </div>
+
+  {# ── Status Filter Tabs ── #}
+  <div class="tabs tabs-box mb-6 w-fit">
+    <a href="?status=pending"
+       class="tab {% if current_status == 'pending' %}tab-active{% endif %}">
+      Pending
+      {% if status_counts.pending %}
+        <span class="badge badge-warning badge-sm ml-1">{{ status_counts.pending }}</span>
+      {% endif %}
+    </a>
+    <a href="?status=approved"
+       class="tab {% if current_status == 'approved' %}tab-active{% endif %}">
+      Approved
+      {% if status_counts.approved %}
+        <span class="badge badge-success badge-sm ml-1">{{ status_counts.approved }}</span>
+      {% endif %}
+    </a>
+    <a href="?status=rejected"
+       class="tab {% if current_status == 'rejected' %}tab-active{% endif %}">
+      Rejected
+      {% if status_counts.rejected %}
+        <span class="badge badge-error badge-sm ml-1">{{ status_counts.rejected }}</span>
+      {% endif %}
+    </a>
+  </div>
+
+  {# ── Table ── #}
+  {% if applications %}
+    <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead class="bg-base-200 text-base-content/60 text-xs uppercase tracking-wide">
+            <tr>
+              <th>#</th>
+              <th>Applicant</th>
+              <th>Full Name</th>
+              <th>Vehicle</th>
+              <th>Applied</th>
+              <th>Status</th>
+              <th class="text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for app in applications %}
+              <tr class="hover">
+                <td class="text-base-content/40 text-sm">{{ app.pk }}</td>
+                <td>
+                  <div class="font-medium text-sm">{{ app.user.username }}</div>
+                  <div class="text-xs text-base-content/40">{{ app.user.email }}</div>
+                </td>
+                <td class="font-medium">{{ app.full_name }}</td>
+                <td>
+                  <span class="badge badge-outline badge-sm">
+                    {{ app.get_vehicle_type_display }}
+                  </span>
+                </td>
+                <td class="text-sm text-base-content/60 whitespace-nowrap">
+                  {{ app.applied_at|date:"N j, Y" }}
+                </td>
+                <td>
+                  <span class="badge badge-sm
+                    {% if app.status == 'approved' %}badge-success
+                    {% elif app.status == 'rejected' %}badge-error
+                    {% else %}badge-warning{% endif %}">
+                    {{ app.get_status_display }}
+                  </span>
+                </td>
+                <td class="text-right">
+                  <a href="{% url 'manager_rider_application_detail' app.pk %}"
+                     class="btn btn-ghost btn-xs">View →</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {# ── Pagination ── #}
+    {% if is_paginated %}
+      <div class="flex justify-center mt-6">
+        <div class="join">
+          {% if page_obj.has_previous %}
+            <a href="?status={{ current_status }}&page={{ page_obj.previous_page_number }}"
+               class="join-item btn btn-sm">«</a>
+          {% endif %}
+          <span class="join-item btn btn-sm btn-disabled">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+          </span>
+          {% if page_obj.has_next %}
+            <a href="?status={{ current_status }}&page={{ page_obj.next_page_number }}"
+               class="join-item btn btn-sm">»</a>
+          {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="card bg-base-100 border border-base-200 shadow-sm">
+      <div class="card-body items-center text-center py-16 gap-2">
+        <div class="text-5xl">📭</div>
+        <h2 class="text-lg font-semibold">No Applications Found</h2>
+        <p class="text-base-content/60 text-sm">
+          There are no <span class="font-medium">{{ current_status }}</span> applications right now.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

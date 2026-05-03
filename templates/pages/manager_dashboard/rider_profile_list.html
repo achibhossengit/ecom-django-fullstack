@@ -1,0 +1,123 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block title %}Rider Profiles{% endblock %}
+
+{% block content %}
+<div class="max-w-5xl mx-auto py-8 px-4">
+
+  <div class="mb-6">
+    <h1 class="text-2xl font-bold tracking-tight">Rider Profiles</h1>
+    <p class="text-base-content/60 text-sm mt-1">
+      All approved riders and their current profile status.
+    </p>
+  </div>
+
+  {# ── Active / Inactive Filter Tabs ── #}
+<div class="tabs tabs-box mb-6 w-fit">
+  <a href="{% url 'manager_rider_profile_list' %}"
+     class="tab {% if current_filter == '' %}tab-active{% endif %}">
+    All
+    <span class="badge badge-sm ml-1">{{ counts.all }}</span>
+  </a>
+  <a href="?active=true"
+     class="tab {% if current_filter == 'true' %}tab-active{% endif %}">
+    Active
+    {% if counts.active %}
+      <span class="badge badge-success badge-sm ml-1">{{ counts.active }}</span>
+    {% endif %}
+  </a>
+  <a href="?active=false"
+     class="tab {% if current_filter == 'false' %}tab-active{% endif %}">
+    Inactive
+    {% if counts.inactive %}
+      <span class="badge badge-ghost badge-sm ml-1">{{ counts.inactive }}</span>
+    {% endif %}
+  </a>
+</div>
+
+  {% if profiles %}
+    <div class="card bg-base-100 border border-base-200 shadow-sm overflow-hidden">
+      <div class="overflow-x-auto">
+        <table class="table table-zebra">
+          <thead class="bg-base-200 text-base-content/60 text-xs uppercase tracking-wide">
+            <tr>
+              <th>#</th>
+              <th>Username</th>
+              <th>Phone</th>
+              <th>Vehicle</th>
+              <th>Status</th>
+              <th>Joined</th>
+              <th class="text-right">Action</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for profile in profiles %}
+              <tr class="hover">
+                <td class="text-base-content/40 text-sm">{{ profile.pk }}</td>
+                <td>
+                  <div class="font-medium text-sm">{{ profile.user.username }}</div>
+                  <div class="text-xs text-base-content/40">{{ profile.user.email }}</div>
+                </td>
+                <td class="text-sm">
+                  {% if profile.phone_number %}
+                    {{ profile.phone_number }}
+                  {% else %}
+                    <span class="text-base-content/30 italic">Not set</span>
+                  {% endif %}
+                </td>
+                <td>
+                  <span class="badge badge-outline badge-sm">
+                    {{ profile.get_vehicle_type_display }}
+                  </span>
+                </td>
+                <td>
+                  {% if profile.is_active %}
+                    <span class="badge badge-success badge-sm">Active</span>
+                  {% else %}
+                    <span class="badge badge-ghost badge-sm">Inactive</span>
+                  {% endif %}
+                </td>
+                <td class="text-sm text-base-content/60 whitespace-nowrap">
+                  {{ profile.created_at|date:"N j, Y" }}
+                </td>
+                <td class="text-right">
+                  <a href="{% url 'manager_rider_profile_detail' profile.pk %}"
+                     class="btn btn-ghost btn-xs">View →</a>
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    {% if is_paginated %}
+      <div class="flex justify-center mt-6">
+        <div class="join">
+            {% if page_obj.has_previous %}
+            <a href="?active={{ current_filter }}&page={{ page_obj.previous_page_number }}" class="join-item btn btn-sm">«</a>
+            {% endif %}
+            <span class="join-item btn btn-sm btn-disabled">
+            Page {{ page_obj.number }} of {{ page_obj.paginator.num_pages }}
+            </span>
+            {% if page_obj.has_next %}
+            <a href="?active={{ current_filter }}&page={{ page_obj.next_page_number }}" class="join-item btn btn-sm">»</a>
+            {% endif %}
+        </div>
+      </div>
+    {% endif %}
+
+  {% else %}
+    <div class="card bg-base-100 border border-base-200 shadow-sm">
+      <div class="card-body items-center text-center py-16 gap-2">
+        <div class="text-5xl">🛵</div>
+        <h2 class="text-lg font-semibold">No Rider Profiles Yet</h2>
+        <p class="text-base-content/60 text-sm">
+          Profiles are created automatically when a rider application is approved.
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

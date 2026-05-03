@@ -5,9 +5,19 @@ from .views import (
     RiderApplicationDetailView,
     RiderApplicationUpdateView,
     RiderApplicationDeleteView,
+    RiderApplicationManagerListView,
+    RiderApplicationManagerDetailView,
+    RiderApplicationManagerUpdateView,
+    RiderApplicationManagerDeleteView,
+    RiderProfileManagerListView,
+    RiderProfileManagerDetailView,
+    RiderProfileManagerDeleteView,
 )
 
 urlpatterns = [
+    # =========================================
+    # rider application customer related urls
+    # =========================================
     path(
         "my-dashboard/be-a-rider/",
         RiderApplicationListView.as_view(),
@@ -32,5 +42,48 @@ urlpatterns = [
         "my-dashboard/be-a-rider/<int:pk>/remove/",
         RiderApplicationDeleteView.as_view(),
         name="rider_application_delete",
+    ),
+
+    # =====================================
+    # rider application manager related urls
+    # ======================================
+    path(
+        "manager-dashboard/rider-applications/",
+        RiderApplicationManagerListView.as_view(),
+        name="manager_rider_application_list",
+    ),
+    path(
+        "manager-dashboard/rider-applications/<int:pk>/",
+        RiderApplicationManagerDetailView.as_view(),
+        name="manager_rider_application_detail",
+    ),
+    path(
+        "manager-dashboard/rider-applications/<int:pk>/update/",
+        RiderApplicationManagerUpdateView.as_view(),
+        name="manager_rider_application_update",
+    ),
+    path(
+        "manager-dashboard/rider-applications/<int:pk>/remove/",
+        RiderApplicationManagerDeleteView.as_view(),
+        name="manager_rider_application_delete",
+    ),
+    
+    # ===================================
+    # rider profile manager related urls
+    # ================================= 
+    path(
+        "manager-dashboard/rider-profiles/",
+        RiderProfileManagerListView.as_view(),
+        name="manager_rider_profile_list",
+    ),
+    path(
+        "manager-dashboard/rider-profiles/<int:pk>/",
+        RiderProfileManagerDetailView.as_view(),
+        name="manager_rider_profile_detail",
+    ),
+    path(
+        "manager-dashboard/rider-profiles/<int:pk>/remove/",
+        RiderProfileManagerDeleteView.as_view(),
+        name="manager_rider_profile_delete",
     ),
 ]

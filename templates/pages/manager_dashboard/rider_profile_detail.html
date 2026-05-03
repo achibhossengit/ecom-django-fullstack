@@ -1,0 +1,103 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block title %}Rider — {{ profile.user.username }}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-8 px-4">
+
+  <a href="{% url 'manager_rider_profile_list' %}"
+     class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back to Rider Profiles
+  </a>
+
+  <div class="card bg-base-100 border border-base-200 shadow-sm mb-6">
+    <div class="card-body gap-5">
+
+      <div class="flex items-start justify-between flex-wrap gap-3">
+        <div>
+          <h1 class="text-xl font-bold">{{ profile.user.get_full_name|default:profile.user.username }}</h1>
+          <p class="text-sm text-base-content/50 mt-0.5">
+            @{{ profile.user.username }} · {{ profile.user.email }}
+          </p>
+        </div>
+        {% if profile.is_active %}
+          <span class="badge badge-success badge-lg">Active</span>
+        {% else %}
+          <span class="badge badge-ghost badge-lg">Inactive</span>
+        {% endif %}
+      </div>
+
+      <div class="divider my-0"></div>
+
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Phone Number</dt>
+          <dd class="font-medium">
+            {% if profile.phone_number %}
+              {{ profile.phone_number }}
+            {% else %}
+              <span class="text-base-content/30 italic">Not set</span>
+            {% endif %}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Vehicle Type</dt>
+          <dd class="font-medium">{{ profile.get_vehicle_type_display }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Member Since</dt>
+          <dd class="font-medium">{{ profile.created_at|date:"N j, Y" }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Profile ID</dt>
+          <dd class="font-medium text-base-content/50">#{{ profile.pk }}</dd>
+        </div>
+      </dl>
+
+    </div>
+  </div>
+
+  {# ── Linked Application ── #}
+  {% with application=profile.user.rider_applications.last %}
+    {% if application %}
+      <div class="card bg-base-200 border border-base-300 shadow-sm mb-6">
+        <div class="card-body py-4 px-5 gap-1">
+          <p class="text-xs font-medium text-base-content/40 uppercase tracking-wide">Linked Application</p>
+          <div class="flex items-center justify-between flex-wrap gap-2 mt-1">
+            <p class="text-sm font-medium">
+              {{ application.full_name }}
+              <span class="text-base-content/40 font-normal">· NID {{ application.nid_number }}</span>
+            </p>
+            <div class="flex items-center gap-2">
+              <span class="badge badge-sm
+                {% if application.status == 'approved' %}badge-success
+                {% elif application.status == 'rejected' %}badge-error
+                {% else %}badge-warning{% endif %}">
+                {{ application.get_status_display }}
+              </span>
+              <a href="{% url 'manager_rider_application_detail' application.pk %}"
+                 class="btn btn-ghost btn-xs">View →</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+  {% endwith %}
+
+  {# ── Actions ── #}
+  <div class="flex justify-end">
+    {% if can_delete %}
+      <a href="{% url 'manager_rider_profile_delete' profile.pk %}"
+         class="btn btn-error btn-outline btn-sm">
+        🗑 Remove Profile
+      </a>
+    {% else %}
+      <button class="btn btn-error btn-outline btn-sm" disabled>🗑 Remove Profile</button>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

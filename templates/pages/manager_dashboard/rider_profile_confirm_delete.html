@@ -1,0 +1,64 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block title %}Remove Rider Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto py-8 px-4">
+
+  <a href="{% url 'manager_rider_profile_detail' profile.pk %}"
+     class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back to Profile
+  </a>
+
+  <div class="card bg-base-100 border border-error/30 shadow-sm">
+    <div class="card-body gap-5">
+
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-full bg-error/10 text-error shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6M9 7h6m2 0H7m4-3h2a1 1 0 011 1v1H9V5a1 1 0 011-1z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold">Remove Rider Profile?</h1>
+      </div>
+
+      <div role="alert" class="alert alert-warning shadow-sm">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 shrink-0" fill="none"
+             viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+        </svg>
+        <div class="text-sm">
+          <p>This will permanently delete the rider profile and remove the user from the <strong>Rider</strong> group.</p>
+          <p class="mt-1">The user account and their application records will <strong>not</strong> be affected.</p>
+        </div>
+      </div>
+
+      <p class="text-base-content/70 text-sm leading-relaxed">
+        You are about to remove the rider profile for
+        <span class="font-semibold text-base-content">{{ profile.user.get_full_name|default:profile.user.username }}</span>
+        (@{{ profile.user.username }}), registered on {{ profile.created_at|date:"N j, Y" }}.
+      </p>
+
+      <div class="divider my-0"></div>
+
+      <form method="post">
+        {% csrf_token %}
+        <div class="flex items-center justify-end gap-3">
+          <a href="{% url 'manager_rider_profile_detail' profile.pk %}"
+             class="btn btn-ghost btn-sm">Cancel</a>
+          <button type="submit" class="btn btn-error btn-sm">
+            Yes, Remove Profile
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}
