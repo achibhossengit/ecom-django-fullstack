@@ -1,0 +1,57 @@
+{% extends "layouts/my_dashboard.html" %}
+
+{% block title %}Delete Application{% endblock %}
+
+{% block content %}
+<div class="max-w-lg mx-auto py-8 px-4">
+
+  {# ── Back link ── #}
+  <a href="{% url 'rider_application_detail' application.pk %}"
+     class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    Back to Application
+  </a>
+
+  <div class="card bg-base-100 border border-error/30 shadow-sm">
+    <div class="card-body gap-5">
+
+      {# ── Icon + Heading ── #}
+      <div class="flex items-center gap-3">
+        <div class="p-2 rounded-full bg-error/10 text-error shrink-0">
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round"
+                  d="M12 9v2m0 4h.01M10.29 3.86L1.82 18a2 2 0 001.71 3h16.94a2 2 0 001.71-3L13.71 3.86a2 2 0 00-3.42 0z"/>
+          </svg>
+        </div>
+        <h1 class="text-xl font-bold">Delete Application?</h1>
+      </div>
+
+      <p class="text-base-content/70 text-sm leading-relaxed">
+        You are about to permanently delete the rider application for
+        <span class="font-semibold text-base-content">{{ application.full_name }}</span>
+        ({{ application.get_vehicle_type_display }}, submitted {{ application.applied_at|date:"N j, Y" }}).
+        <br class="mt-1">
+        This action <span class="font-semibold text-error">cannot be undone</span>.
+      </p>
+
+      <div class="divider my-0"></div>
+
+      {# ── Confirm form ── #}
+      <form method="post">
+        {% csrf_token %}
+        <div class="flex items-center justify-end gap-3 flex-wrap">
+          <a href="{% url 'rider_application_detail' application.pk %}"
+             class="btn btn-ghost btn-sm">Cancel</a>
+          <button type="submit" class="btn btn-error btn-sm">
+            Yes, Delete Application
+          </button>
+        </div>
+      </form>
+
+    </div>
+  </div>
+
+</div>
+{% endblock %}

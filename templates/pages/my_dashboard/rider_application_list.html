@@ -1,0 +1,71 @@
+{% extends "layouts/my_dashboard.html" %}
+
+{% block title %}Be a Rider{% endblock %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto py-8 px-4">
+
+  {# ── Header ── #}
+  <div class="flex items-start justify-between gap-4 mb-8">
+    <div>
+      <h1 class="text-2xl font-bold tracking-tight">Be a Rider</h1>
+      <p class="text-base-content/60 text-sm mt-1">
+        Track all your rider applications below.
+      </p>
+    </div>
+
+    {% if can_apply %}
+      <a href="{% url 'rider_application_add' %}" class="btn btn-primary btn-sm shrink-0">
+        + Apply Now
+      </a>
+    {% else %}
+      <button class="btn btn-primary btn-sm shrink-0" disabled title="You already have an active application.">
+        + Apply Now
+      </button>
+    {% endif %}
+  </div>
+
+  {# ── Application List ── #}
+  {% if applications %}
+    <div class="flex flex-col gap-3">
+      {% for app in applications %}
+        <a href="{% url 'rider_application_detail' app.pk %}"
+           class="card bg-base-100 border border-base-200 shadow-sm hover:shadow-md hover:border-primary/30 transition-all duration-150">
+          <div class="card-body py-4 px-5 flex-row items-center justify-between gap-4 flex-wrap">
+            <div>
+              <p class="font-semibold">{{ app.full_name }}</p>
+              <p class="text-sm text-base-content/50 mt-0.5">
+                {{ app.get_vehicle_type_display }}
+                <span class="mx-1">·</span>
+                License: {{ app.license_number }}
+                <span class="mx-1">·</span>
+                {{ app.applied_at|date:"N j, Y" }}
+              </p>
+            </div>
+            <span class="badge badge-md
+              {% if app.status == 'approved' %}badge-success
+              {% elif app.status == 'rejected' %}badge-error
+              {% else %}badge-warning{% endif %}">
+              {{ app.get_status_display }}
+            </span>
+          </div>
+        </a>
+      {% endfor %}
+    </div>
+
+  {% else %}
+    {# ── Empty State ── #}
+    <div class="card bg-base-100 border border-base-200 shadow-sm">
+      <div class="card-body items-center text-center py-16 gap-3">
+        <div class="text-5xl">🛵</div>
+        <h2 class="text-lg font-semibold">No Applications Yet</h2>
+        <p class="text-base-content/60 text-sm max-w-xs">
+          You haven't applied to be a rider yet.
+          {% if can_apply %}Hit the button above to get started.{% endif %}
+        </p>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

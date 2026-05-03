@@ -1,0 +1,80 @@
+{% extends "layouts/my_dashboard.html" %}
+
+{% block title %}{% if object %}Edit Application{% else %}Apply as a Rider{% endif %}{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto py-8 px-4">
+
+  {# ── Back link ── #}
+  {% if object %}
+    <a href="{% url 'rider_application_detail' object.pk %}"
+       class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
+  {% else %}
+    <a href="{% url 'rider_application_list' %}"
+       class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
+  {% endif %}
+    <svg class="w-4 h-4" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <path stroke-linecap="round" stroke-linejoin="round" d="M15 19l-7-7 7-7"/>
+    </svg>
+    {% if object %}Back to Application{% else %}Back to Applications{% endif %}
+  </a>
+
+  {# ── Header ── #}
+  <div class="mb-8">
+    <h1 class="text-2xl font-bold tracking-tight">
+      {% if object %}Edit Application{% else %}Apply as a Rider{% endif %}
+    </h1>
+    <p class="text-base-content/60 text-sm mt-1">
+      {% if object %}
+        Update your pending application details below.
+      {% else %}
+        Fill in the form below to submit a new rider application.
+      {% endif %}
+    </p>
+  </div>
+
+  {# ── Form Card ── #}
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body gap-5">
+
+      <form method="post" novalidate>
+        {% csrf_token %}
+
+        {% for field in form %}
+          <div class="form-control mb-4">
+            <label class="label" for="{{ field.id_for_label }}">
+              <span class="label-text font-medium">{{ field.label }}</span>
+            </label>
+            {{ field }}
+            {% if field.errors %}
+              {% for error in field.errors %}
+                <p class="text-error text-xs mt-1">{{ error }}</p>
+              {% endfor %}
+            {% endif %}
+            {% if field.help_text %}
+              <p class="text-base-content/40 text-xs mt-1">{{ field.help_text }}</p>
+            {% endif %}
+          </div>
+        {% endfor %}
+
+        {# ── Buttons ── #}
+        <div class="card-actions justify-end gap-3 pt-2">
+          {% if object %}
+            <a href="{% url 'rider_application_detail' object.pk %}"
+               class="btn btn-ghost btn-sm">Cancel</a>
+          {% else %}
+            <a href="{% url 'rider_application_list' %}"
+               class="btn btn-ghost btn-sm">Cancel</a>
+          {% endif %}
+
+          <button type="submit" class="btn btn-primary btn-sm">
+            {% if object %}Save Changes{% else %}Submit Application{% endif %}
+          </button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+
+</div>
+{% endblock %}
