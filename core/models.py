@@ -42,4 +42,5 @@ class ExtraPermission(models.Model):
         default_permissions = ()
         permissions = [
             ("view_managerdashboard", "Can view manager dashboard"),
+            ("view_riderdashboard", "Can view rider dashboard"),
         ]

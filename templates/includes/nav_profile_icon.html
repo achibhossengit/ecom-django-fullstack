@@ -16,6 +16,9 @@
     {% if perms.core.view_managerdashboard %}
       <li><a href="{% url 'product_list' %}">{% trans "Manager Dashboard" %}</a></li>
     {% endif %}
+    {% if perms.core.view_riderdashboard %}
+      <li><a href="{% url 'rider_address_list' %}">{% trans "Rider Dashboard" %}</a></li>
+    {% endif %}
     <li><a href="{% url 'account_logout' %}">{% trans "Logout" %}</a></li>
   </ul>
 </div>

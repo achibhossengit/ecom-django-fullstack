@@ -1,12 +1,13 @@
-from django.shortcuts import redirect
+from django.shortcuts import redirect, render, get_object_or_404
 from django.contrib.auth.mixins import LoginRequiredMixin, PermissionRequiredMixin
+from django.views import View
 from django.views.generic import ListView, CreateView, DetailView, UpdateView, DeleteView
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.auth.models import Group
 
-from .models import RiderApplication, RiderProfile
-from .forms import RiderApplicationForm, RiderApplicationStatusForm
+from .models import RiderApplication, RiderProfile, RiderAddress
+from .forms import RiderApplicationForm, RiderApplicationStatusForm, RiderAddressForm
 
 # ======================================
 # Rider Application Customer related views
@@ -303,3 +304,121 @@ class RiderProfileManagerDeleteView(LoginRequiredMixin, PermissionRequiredMixin,
             f"Rider profile for {profile.user.username} has been permanently removed."
         )
         return super().form_valid(form)
+    
+# ==================================
+# Rider address views
+# ==================================
+class RiderAddressMixin(LoginRequiredMixin):
+    """Resolves the current user's RiderProfile and guards non-riders."""
+
+    def dispatch(self, request, *args, **kwargs):
+        self.rider_profile = RiderProfile.objects.filter(user=request.user).first()
+        if not self.rider_profile:
+            messages.error(request, "You do not have an active rider profile.")
+            return redirect("/")
+        return super().dispatch(request, *args, **kwargs)
+
+
+class RiderAddressListView(RiderAddressMixin, View):
+    def get(self, request):
+        addresses = RiderAddress.objects.filter(
+            rider=self.rider_profile
+        ).order_by("-is_active", "pk")
+        return render(request, "pages/rider_dashboard/address_list.html", {
+            "addresses": addresses,
+        })
+
+    def post(self, request):
+        """Toggle active address."""
+        if not request.user.has_perm("rider.change_rideraddress"):
+            messages.error(request, "You don't have permission to change address.")
+            return redirect("rider_address_list")
+        address_id = request.POST.get("address_id")
+        address = get_object_or_404(RiderAddress, id=address_id, rider=self.rider_profile)
+        # RiderAddress.save() already deactivates others — just flip this one
+        address.is_active = True
+        address.save()
+        return redirect("rider_address_list")
+
+
+class RiderAddressAddView(RiderAddressMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.has_perm("rider.add_rideraddress"):
+            messages.error(request, "You don't have permission to add an address.")
+            return redirect("rider_address_list")
+        return response
+
+    def get(self, request):
+        return render(request, "pages/rider_dashboard/address_form.html", {
+            "form": RiderAddressForm(),
+        })
+
+    def post(self, request):
+        form = RiderAddressForm(request.POST)
+        if form.is_valid():
+            address = form.save(commit=False)
+            address.rider = self.rider_profile
+            address.save()
+            messages.success(request, "Address added successfully.")
+            return redirect("rider_address_list")
+        return render(request, "pages/rider_dashboard/address_form.html", {"form": form})
+
+
+class RiderAddressEditView(RiderAddressMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.has_perm("rider.change_rideraddress"):
+            messages.error(request, "You don't have permission to edit an address.")
+            return redirect("rider_address_list")
+        return response
+
+    def get_address(self, pk):
+        return get_object_or_404(RiderAddress, id=pk, rider=self.rider_profile)
+
+    def get(self, request, pk):
+        address = self.get_address(pk)
+        form = RiderAddressForm(instance=address, initial={
+            "country_id": address.country_id,
+            "city_id": address.city_id,
+            "area_id": address.area_id,
+            "zone_id": address.zone_id,
+        })
+        return render(request, "pages/rider_dashboard/address_form.html", {
+            "form": form,
+            "address": address,
+        })
+
+    def post(self, request, pk):
+        address = self.get_address(pk)
+        form = RiderAddressForm(request.POST, instance=address)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Address updated successfully.")
+            return redirect("rider_address_list")
+        return render(request, "pages/rider_dashboard/address_form.html", {
+            "form": form,
+            "address": address,
+        })
+
+
+class RiderAddressRemoveView(RiderAddressMixin, View):
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.has_perm("rider.delete_rideraddress"):
+            messages.error(request, "You don't have permission to delete an address.")
+            return redirect("rider_address_list")
+        return response
+
+    def get_address(self, pk):
+        return get_object_or_404(RiderAddress, id=pk, rider=self.rider_profile)
+
+    def get(self, request, pk):
+        return render(request, "pages/rider_dashboard/address_remove.html", {
+            "address": self.get_address(pk),
+        })
+
+    def post(self, request, pk):
+        self.get_address(pk).delete()
+        messages.success(request, "Address removed successfully.")
+        return redirect("rider_address_list")

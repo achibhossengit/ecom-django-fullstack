@@ -1,6 +1,6 @@
 from django import forms
 from core.mixins import FancyFormFieldMixin
-from .models import RiderApplication
+from .models import RiderApplication, RiderAddress
 
 
 class RiderApplicationForm(FancyFormFieldMixin, forms.ModelForm):
@@ -19,3 +19,11 @@ class RiderApplicationStatusForm(forms.ModelForm):
         model = RiderApplication
         fields = ["status"]
         widgets = {"status": forms.HiddenInput()}
+        
+# ====================
+# Rider Address form
+# ====================
+class RiderAddressForm(FancyFormFieldMixin, forms.ModelForm):
+    class Meta:
+        model = RiderAddress
+        fields = ["country_id", "city_id", "area_id", "zone_id"]
