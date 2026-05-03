@@ -13,6 +13,7 @@
 
 {# Prepend "Profile" as the first nav item, then render the parent links #}
 {% block aside_links %}
+{% if perms.product.view_category %}
 <li>
   <a href="{% url 'category_list' %}" class="active font-medium">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
@@ -22,6 +23,8 @@
     Manage Categories
   </a>
 </li>
+{% endif %}
+{% if perms.product.view_product %}
 <li>
   <a href="{% url 'product_list' %}" class="active font-medium">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
@@ -31,8 +34,10 @@
     Manage Products
   </a>
 </li>
+{% endif %}
+{% if perms.order.view_order %}
 <li>
-  <a href="{% url 'my_profile' %}" class="active font-medium">
+  <a href="#" class="active font-medium">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
       <circle cx="8" cy="5" r="3"/>
       <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
@@ -40,9 +45,11 @@
     Manage Orders
   </a>
 </li>
+{% endif %}
 
+{% if perms.rider.view_rider %}
 <li>
-  <a href="{% url 'my_profile' %}" class="active font-medium">
+  <a href="#" class="active font-medium">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
       <circle cx="8" cy="5" r="3"/>
       <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
@@ -50,13 +57,16 @@
     Manage Riders
   </a>
 </li>
+{% endif %}
+{% if perms.rider.view_riderapplication %}
 <li>
-  <a href="{% url 'my_profile' %}" class="active font-medium">
+  <a href="#" class="active font-medium">
     <svg class="w-4 h-4 shrink-0" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 16 16">
       <circle cx="8" cy="5" r="3"/>
       <path d="M2 14c0-3.3 2.7-5 6-5s6 1.7 6 5"/>
     </svg>
     Rider Applications
   </a>
+{% endif %}
 </li>
 {% endblock aside_links %}

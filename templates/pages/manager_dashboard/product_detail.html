@@ -82,14 +82,18 @@
             </a>
         </div>
         <div class="flex justify-end gap-4">
+            {% if perms.product.change_product %}
             <a href="{% url 'product_edit' product.id %}" 
                class="btn btn-primary btn-outline">
                 Edit Product
             </a>
+            {% endif %}
+            {% if perms.product.delete_product %}
             <a href="{% url 'product_remove' product.id %}" 
                class="btn btn-error btn-outline">
                 Remove
             </a>
+            {% endif %}
         </div>
     </div>
 </div>

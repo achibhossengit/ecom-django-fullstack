@@ -29,7 +29,9 @@
     </div>
 
     <div class="flex justify-end items-center my-5">
+      {% if perms.product.add_category %}
         <a href="{% url "category_add" %}" class="btn btn-primary">+ Add New Category</a>
+      {% endif %}
     </div>
 </div>
 {% endblock content %}

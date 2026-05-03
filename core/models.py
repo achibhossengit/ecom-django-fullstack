@@ -34,3 +34,12 @@ class Zone(models.Model):
 
     def __str__(self):
         return f"{self.name_en}"
+    
+    
+class ExtraPermission(models.Model):
+    class Meta:
+        managed = False
+        default_permissions = ()
+        permissions = [
+            ("view_managerdashboard", "Can view manager dashboard"),
+        ]

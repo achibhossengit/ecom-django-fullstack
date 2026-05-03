@@ -3,6 +3,7 @@ from django.urls import reverse_lazy
 from django.db import transaction
 from django.db.models import Count
 from django.contrib.auth import get_user_model
+from django.contrib.auth.mixins import PermissionRequiredMixin, LoginRequiredMixin
 from django.views.generic import ListView, CreateView, UpdateView, DeleteView, DetailView
 from .forms import ProductModelForm, CategoryModelForm
 from .models import Product, Category, Inventory, PriceHistory, QuantityHistory, CategoryImage, ProductImage
@@ -11,11 +12,13 @@ from .models import Product, Category, Inventory, PriceHistory, QuantityHistory,
 # =====================
 # Category Views
 # =====================
-class CategoryListView(ListView):
+class CategoryListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = ['core.view_managerdashboard', 'product.view_category']
     queryset = Category.objects.annotate(product_count=Count('products'))
     template_name = "pages/manager_dashboard/category_list.html"
     
-class CategoryAddView(CreateView):
+class CategoryAddView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ['core.view_managerdashboard', 'product.add_category']
     form_class = CategoryModelForm
     template_name = "pages/manager_dashboard/category_add.html"
     success_url = reverse_lazy("category_list")
@@ -25,14 +28,15 @@ class CategoryAddView(CreateView):
         images = self.request.FILES.getlist('images')
         for image in images:
             CategoryImage.objects.create(category=obj, image=image)
-
         return super().form_valid(form)
 
-class CategoryDetailView(DetailView):
+class CategoryDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    permission_required = ['core.view_managerdashboard', 'product.view_category']
     model = Category
     template_name = "pages/manager_dashboard/category_detail.html"
 
-class CategoryEditView(UpdateView):
+class CategoryEditView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ['core.view_managerdashboard', 'product.change_category']
     model = Category
     form_class = CategoryModelForm
     template_name = "pages/manager_dashboard/category_edit.html"
@@ -42,21 +46,17 @@ class CategoryEditView(UpdateView):
 
     def form_valid(self, form):
         obj = form.save()
-        
-        # 1. Deleted images
         deleted_ids = self.request.POST.getlist("delete_images")
         if deleted_ids:
             for img in CategoryImage.objects.filter(id__in=deleted_ids, category=obj):
-                img.delete()  # calls model.delete(), triggers signal
-
-        # 2. New uploaded images
+                img.delete()
         new_images = self.request.FILES.getlist("images")
         for img in new_images:
             CategoryImage.objects.create(category=obj, image=img)
-
         return super().form_valid(form)
 
-class CategoryRemoveView(DeleteView):
+class CategoryRemoveView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = ["core.view_managerdashboard", "product.delete_category"]
     queryset = Category.objects.annotate(product_count=Count("products"))
     template_name = "pages/manager_dashboard/category_remove.html"
     success_url = reverse_lazy("category_list")
@@ -65,11 +65,13 @@ class CategoryRemoveView(DeleteView):
 # ==============================
 # Product views
 # ==============================
-class ProductListView(ListView):
+class ProductListView(LoginRequiredMixin, PermissionRequiredMixin, ListView):
+    permission_required = ["core.view_managerdashboard", "product.view_product"]
     queryset = Product.objects.select_related('category').select_related('inventory').all()
     template_name = "pages/manager_dashboard/product_list.html"
     
-class ProductAddView(CreateView):
+class ProductAddView(LoginRequiredMixin, PermissionRequiredMixin, CreateView):
+    permission_required = ["core.view_managerdashboard", "product.add_product"]
     form_class = ProductModelForm
     template_name = "pages/manager_dashboard/product_add.html"
     success_url = reverse_lazy("product_list")
@@ -81,7 +83,6 @@ class ProductAddView(CreateView):
 
         print(f"product images for adding: {images}")
         
-
         user_id = self.request.user.id
         obj = form.save(commit=False)
         obj.created_by = user_id
@@ -99,7 +100,8 @@ class ProductAddView(CreateView):
 
         return super().form_valid(form)
 
-class ProductDetailView(DetailView):
+class ProductDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
+    permission_required = ["core.view_managerdashboard", "product.view_product"]
     queryset = Product.objects.select_related('inventory', 'category').all()
     template_name = "pages/manager_dashboard/product_detail.html"
 
@@ -113,7 +115,8 @@ class ProductDetailView(DetailView):
             context["created_by_name"] = "Unknown"
         return context
 
-class ProductEditView(UpdateView):
+class ProductEditView(LoginRequiredMixin, PermissionRequiredMixin, UpdateView):
+    permission_required = ["core.view_managerdashboard", "product.change_product"]
     model = Product
     queryset = Product.objects.select_related('inventory').all()
     form_class = ProductModelForm
@@ -177,7 +180,8 @@ class ProductEditView(UpdateView):
 
         return super().form_valid(form)
 
-class ProductRemoveView(DeleteView):
+class ProductRemoveView(LoginRequiredMixin, PermissionRequiredMixin, DeleteView):
+    permission_required = ["core.view_managerdashboard", "product.delete_product"]
     model = Product
     template_name = "pages/manager_dashboard/product_remove.html"
     success_url = reverse_lazy("product_list")
