@@ -205,11 +205,16 @@ class RiderApplicationManagerUpdateView(LoginRequiredMixin, PermissionRequiredMi
 
         if new_status == "approved":
             # Create RiderProfile if one doesn't exist yet
+            user = application.user
+            full_name = application.full_name or user.first_name or ""
+            phone_number = getattr(application, "phone_number", "")
+            vehicle_type = application.vehicle_type
             RiderProfile.objects.get_or_create(
-                user=application.user,
+                user=user,
                 defaults={
-                    "phone_number": "",          # rider fills this in later
-                    "vehicle_type": application.vehicle_type,
+                    "full_name": full_name,
+                    "phone_number": phone_number,
+                    "vehicle_type": vehicle_type,
                     "is_active": False,
                 },
             )

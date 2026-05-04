@@ -18,6 +18,8 @@ class RiderProfile(models.Model):
         on_delete=models.CASCADE,
         related_name="rider_profile"
     )
+    full_name = models.CharField(max_length=200)
+    profile_image = models.ImageField(upload_to='rider_profiles', null=True, blank=True)
     phone_number = models.CharField(max_length=20)
     vehicle_type = models.CharField(
         max_length=20,
