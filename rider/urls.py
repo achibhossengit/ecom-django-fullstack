@@ -16,6 +16,8 @@ from .views import (
     RiderAddressAddView,
     RiderAddressEditView,
     RiderAddressRemoveView,
+    RiderProfileView,
+    RiderProfileEditView,
 )
 
 urlpatterns = [
@@ -113,5 +115,19 @@ urlpatterns = [
         "rider-dashboard/addresses/<int:pk>/remove/",
         RiderAddressRemoveView.as_view(),
         name="rider_address_remove",
+    ),
+    
+    # ===============================
+    # Rider Profiles; Rider dashboard
+    # ===============================
+    path(
+        "rider-dashboard/profile/",
+        RiderProfileView.as_view(),
+        name="rider_profile",
+    ),
+    path(
+        "rider-dashboard/profile/edit/",
+        RiderProfileEditView.as_view(),
+        name="rider_profile_edit",
     ),
 ]

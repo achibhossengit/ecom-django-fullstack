@@ -1,0 +1,115 @@
+{% extends "layouts/rider_dashboard.html" %}
+
+{% block title %}Rider Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body gap-6">
+
+      {# ── Header row ── #}
+      <div class="flex items-start justify-between flex-wrap gap-4">
+
+        <div class="flex items-center gap-4">
+          {# Avatar #}
+          <div class="avatar">
+            <div class="w-16 h-16 rounded-full ring ring-base-300">
+              {% if profile.profile_image %}
+                <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}">
+              {% else %}
+                <div class="bg-base-200 w-full h-full flex items-center justify-center text-2xl font-bold text-base-content/30 rounded-full">
+                  {{ profile.full_name|first|upper }}
+                </div>
+              {% endif %}
+            </div>
+          </div>
+
+          <div>
+            <h2 class="text-xl font-bold">{{ profile.full_name }}</h2>
+            <p class="text-sm text-base-content/50">{{ profile.user.email }}</p>
+          </div>
+        </div>
+
+        {# Edit button #}
+        {% if perms.rider.change_riderprofile %}
+          <a href="{% url 'rider_profile_edit' %}" class="btn btn-outline btn-sm">
+            Edit Profile
+          </a>
+        {% endif %}
+      </div>
+
+      <div class="divider my-0"></div>
+
+      {# ── Details ── #}
+      <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4 text-sm">
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Phone Number</dt>
+          <dd class="font-medium">
+            {% if profile.phone_number %}{{ profile.phone_number }}
+            {% else %}<span class="italic text-base-content/30">Not set</span>{% endif %}
+          </dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Vehicle Type</dt>
+          <dd class="font-medium">{{ profile.get_vehicle_type_display }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Member Since</dt>
+          <dd class="font-medium">{{ profile.created_at|date:"N j, Y" }}</dd>
+        </div>
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Username</dt>
+          <dd class="font-medium">@{{ profile.user.username }}</dd>
+        </div>
+      </dl>
+
+      <div class="divider my-0"></div>
+
+      {# ── Active status toggle ── #}
+      <div class="flex items-center justify-between gap-4">
+        <div>
+          <p class="font-medium text-sm">Availability Status</p>
+          <p class="text-xs text-base-content/50 mt-0.5">
+            Toggle to let the system know you are available to accept deliveries.
+          </p>
+        </div>
+
+        {% if perms.rider.change_riderprofile %}
+          <form method="post" action="{% url 'rider_profile' %}">
+            {% csrf_token %}
+            <input
+              type="checkbox"
+              class="toggle toggle-success"
+              {% if profile.is_active %}checked{% endif %}
+              onchange="this.closest('form').submit()"
+            />
+          </form>
+        {% else %}
+          <input
+            type="checkbox"
+            class="toggle toggle-success cursor-not-allowed opacity-50"
+            {% if profile.is_active %}checked{% endif %}
+            disabled
+          />
+        {% endif %}
+      </div>
+
+      {# Active badge #}
+      <div>
+        {% if profile.is_active %}
+          <span class="badge badge-success gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-white inline-block"></span>
+            Online — Available for deliveries
+          </span>
+        {% else %}
+          <span class="badge badge-ghost gap-1">
+            <span class="w-1.5 h-1.5 rounded-full bg-base-content/30 inline-block"></span>
+            Offline
+          </span>
+        {% endif %}
+      </div>
+
+    </div>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "layouts/rider_dashboard.html" %}
+
+{% block title %}Edit Profile{% endblock %}
+
+{% block content %}
+<div class="max-w-2xl mx-auto flex flex-col gap-6">
+  <div class="card bg-base-100 border border-base-200 shadow-sm">
+    <div class="card-body gap-6">
+
+      <div>
+        <h2 class="text-xl font-semibold">Edit Profile</h2>
+        <p class="text-sm text-base-content/50 mt-0.5">
+          Update your rider profile information below.
+        </p>
+      </div>
+
+      <div class="divider my-0"></div>
+
+      {# ── Current avatar preview ── #}
+      <div class="flex items-center gap-4">
+        <div class="avatar">
+          <div class="w-14 h-14 rounded-full ring ring-base-300">
+            {% if profile.profile_image %}
+              <img src="{{ profile.profile_image.url }}" alt="{{ profile.full_name }}" id="avatar-preview">
+            {% else %}
+              <div class="bg-base-200 w-full h-full flex items-center justify-center text-xl font-bold text-base-content/30 rounded-full" id="avatar-placeholder">
+                {{ profile.full_name|first|upper }}
+              </div>
+            {% endif %}
+          </div>
+        </div>
+        <div class="text-sm text-base-content/50">
+          <p class="font-medium text-base-content">Profile Photo</p>
+          <p>JPG or PNG. Recommended 400×400px.</p>
+        </div>
+      </div>
+
+      {# ── Form ── #}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="flex flex-col gap-4">
+          {% for field in form %}
+            <div class="form-control w-full">
+              <label class="label pb-1" for="{{ field.id_for_label }}">
+                <span class="label-text text-sm font-medium">{{ field.label }}</span>
+              </label>
+              {{ field }}
+              {% if field.errors %}
+                {% for error in field.errors %}
+                  <p class="text-error text-xs mt-1">{{ error }}</p>
+                {% endfor %}
+              {% endif %}
+              {% if field.help_text %}
+                <p class="text-base-content/40 text-xs mt-1">{{ field.help_text }}</p>
+              {% endif %}
+            </div>
+          {% endfor %}
+        </div>
+
+        {% if form.non_field_errors %}
+          <div class="alert alert-error mt-4 text-sm py-2">
+            {{ form.non_field_errors|join:", " }}
+          </div>
+        {% endif %}
+
+        <div class="divider my-4"></div>
+
+        <div class="flex justify-between items-center gap-2">
+          <a href="{% url 'rider_profile' %}" class="btn btn-ghost btn-sm">Cancel</a>
+          <button type="submit" class="btn btn-primary btn-sm">Save Changes</button>
+        </div>
+
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

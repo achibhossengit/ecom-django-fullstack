@@ -7,7 +7,7 @@ from django.contrib import messages
 from django.contrib.auth.models import Group
 
 from .models import RiderApplication, RiderProfile, RiderAddress
-from .forms import RiderApplicationForm, RiderApplicationStatusForm, RiderAddressForm
+from .forms import RiderApplicationForm, RiderApplicationStatusForm, RiderAddressForm, RiderProfileForm
 
 # ======================================
 # Rider Application Customer related views
@@ -427,3 +427,54 @@ class RiderAddressRemoveView(RiderAddressMixin, View):
         self.get_address(pk).delete()
         messages.success(request, "Address removed successfully.")
         return redirect("rider_address_list")
+    
+# ==============================
+# Rider Profile; RiderDashboard
+# ==============================
+class RiderProfileView(RiderAddressMixin, View):
+    """Detail + active toggle."""
+
+    def get(self, request):
+        return render(request, "pages/rider_dashboard/rider_profile.html", {
+            "profile": self.rider_profile,
+        })
+
+    def post(self, request):
+        """Toggle is_active via the status switch."""
+        if not request.user.has_perm("rider.change_riderprofile"):
+            messages.error(request, "You don't have permission to update your status.")
+            return redirect("rider_profile")
+        self.rider_profile.is_active = not self.rider_profile.is_active
+        self.rider_profile.save(update_fields=["is_active"])
+        status = "active" if self.rider_profile.is_active else "inactive"
+        messages.success(request, f"You are now {status}.")
+        return redirect("rider_profile")
+
+
+class RiderProfileEditView(RiderAddressMixin, View):
+
+    def dispatch(self, request, *args, **kwargs):
+        response = super().dispatch(request, *args, **kwargs)
+        if not request.user.has_perm("rider.change_riderprofile"):
+            messages.error(request, "You don't have permission to edit your profile.")
+            return redirect("rider_profile")
+        return response
+
+    def get(self, request):
+        form = RiderProfileForm(instance=self.rider_profile)
+        return render(request, "pages/rider_dashboard/rider_profile_edit.html", {
+            "form": form,
+            "profile": self.rider_profile,
+        })
+
+    def post(self, request):
+        form = RiderProfileForm(request.POST, request.FILES, instance=self.rider_profile)
+        if form.is_valid():
+            form.save()
+            messages.success(request, "Profile updated successfully.")
+            return redirect("rider_profile")
+        return render(request, "pages/rider_dashboard/rider_profile_edit.html", {
+            "form": form,
+            "profile": self.rider_profile,
+        })
+        

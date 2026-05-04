@@ -1,6 +1,6 @@
 from django import forms
 from core.mixins import FancyFormFieldMixin
-from .models import RiderApplication, RiderAddress
+from .models import RiderApplication, RiderAddress, RiderProfile
 
 
 class RiderApplicationForm(FancyFormFieldMixin, forms.ModelForm):
@@ -27,3 +27,11 @@ class RiderAddressForm(FancyFormFieldMixin, forms.ModelForm):
     class Meta:
         model = RiderAddress
         fields = ["country_id", "city_id", "area_id", "zone_id"]
+        
+# =================
+# RiderProfile From
+# ================
+class RiderProfileForm(FancyFormFieldMixin, forms.ModelForm):
+    class Meta:
+        model = RiderProfile
+        fields = ["full_name", "phone_number", "vehicle_type", "profile_image"]
