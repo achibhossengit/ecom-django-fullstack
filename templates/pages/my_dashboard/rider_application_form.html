@@ -1,11 +1,11 @@
 {% extends "layouts/my_dashboard.html" %}
+{% load static %}
 
 {% block title %}{% if object %}Edit Application{% else %}Apply as a Rider{% endif %}{% endblock %}
 
 {% block content %}
 <div class="max-w-2xl mx-auto py-8 px-4">
 
-  {# ── Back link ── #}
   {% if object %}
     <a href="{% url 'rider_application_detail' object.pk %}"
        class="inline-flex items-center gap-1 text-sm text-base-content/50 hover:text-base-content mb-6 transition-colors">
@@ -19,54 +19,204 @@
     {% if object %}Back to Application{% else %}Back to Applications{% endif %}
   </a>
 
-  {# ── Header ── #}
   <div class="mb-8">
     <h1 class="text-2xl font-bold tracking-tight">
       {% if object %}Edit Application{% else %}Apply as a Rider{% endif %}
     </h1>
     <p class="text-base-content/60 text-sm mt-1">
-      {% if object %}
-        Update your pending application details below.
-      {% else %}
-        Fill in the form below to submit a new rider application.
-      {% endif %}
+      {% if object %}Update your pending application details.
+      {% else %}Fill in the form below to submit a new rider application.{% endif %}
     </p>
   </div>
 
-  {# ── Form Card ── #}
   <div class="card bg-base-100 border border-base-200 shadow-sm">
     <div class="card-body gap-5">
-
-      <form method="post" novalidate>
+      <form method="post" enctype="multipart/form-data" novalidate>
         {% csrf_token %}
 
-        {% for field in form %}
-          <div class="form-control mb-4">
-            <label class="label" for="{{ field.id_for_label }}">
-              <span class="label-text font-medium">{{ field.label }}</span>
-            </label>
-            {{ field }}
-            {% if field.errors %}
-              {% for error in field.errors %}
-                <p class="text-error text-xs mt-1">{{ error }}</p>
-              {% endfor %}
-            {% endif %}
-            {% if field.help_text %}
-              <p class="text-base-content/40 text-xs mt-1">{{ field.help_text }}</p>
-            {% endif %}
-          </div>
-        {% endfor %}
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
 
-        {# ── Buttons ── #}
-        <div class="card-actions justify-end gap-3 pt-2">
-          {% if object %}
-            <a href="{% url 'rider_application_detail' object.pk %}"
-               class="btn btn-ghost btn-sm">Cancel</a>
-          {% else %}
-            <a href="{% url 'rider_application_list' %}"
-               class="btn btn-ghost btn-sm">Cancel</a>
+          {# Full Name #}
+          <div class="form-control w-full">
+            <label class="label pb-1" for="{{ form.full_name.id_for_label }}">
+              <span class="label-text font-medium">Full Name</span>
+            </label>
+            {{ form.full_name }}
+            {% for error in form.full_name.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# Phone Number #}
+          <div class="form-control w-full">
+            <label class="label pb-1" for="{{ form.phone_number.id_for_label }}">
+              <span class="label-text font-medium">Phone Number</span>
+            </label>
+            {{ form.phone_number }}
+            {% for error in form.phone_number.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# NID Number #}
+          <div class="form-control w-full">
+            <label class="label pb-1" for="{{ form.nid_number.id_for_label }}">
+              <span class="label-text font-medium">NID Number</span>
+            </label>
+            {{ form.nid_number }}
+            {% for error in form.nid_number.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# License Number #}
+          <div class="form-control w-full">
+            <label class="label pb-1" for="{{ form.license_number.id_for_label }}">
+              <span class="label-text font-medium">License Number</span>
+            </label>
+            {{ form.license_number }}
+            {% for error in form.license_number.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# Vehicle Type #}
+          <div class="form-control w-full">
+            <label class="label pb-1" for="{{ form.vehicle_type.id_for_label }}">
+              <span class="label-text font-medium">Vehicle Type</span>
+            </label>
+            {{ form.vehicle_type }}
+            {% for error in form.vehicle_type.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# Country #}
+          <div class="form-control w-full">
+            <label class="label pb-1">
+              <span class="label-text font-medium">Country</span>
+            </label>
+            <select id="id_country_select" class="select select-bordered select-sm w-full"></select>
+            {{ form.country_id }}{# hidden #}
+            {% for error in form.errors.country_id %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# City #}
+          <div class="form-control w-full">
+            <label class="label pb-1">
+              <span class="label-text font-medium">City</span>
+            </label>
+            <select id="id_city_select" class="select select-bordered select-sm w-full"></select>
+            {{ form.city_id }}{# hidden #}
+            {% for error in form.errors.city_id %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# Area #}
+          <div class="form-control w-full">
+            <label class="label pb-1">
+              <span class="label-text font-medium">Area</span>
+            </label>
+            <select id="id_area_select" class="select select-bordered select-sm w-full"></select>
+            {{ form.area_id }}{# hidden #}
+            {% for error in form.errors.area_id %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+
+          {# Zone #}
+          <div class="form-control w-full">
+            <label class="label pb-1">
+              <span class="label-text font-medium">Zone <span class="text-base-content/40 font-normal">(optional)</span></span>
+            </label>
+            <select id="id_zone_select" class="select select-bordered select-sm w-full"></select>
+            {{ form.zone_id }}{# hidden #}
+            {% for error in form.errors.zone_id %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+          </div>
+        </div>
+
+        <!-- 🔹 Image Section -->
+        <div class="flex flex-col my-2">
+          <!-- 🔹 Existing Image (ONLY for edit page) -->
+          {% if object and object.image %}
+          <div id="existingImage"
+              style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;">
+              <div data-id="{{ object.image.id }}"
+                  style="position:relative; width:64px; height:64px; flex-shrink:0;">
+
+                  <img src="{{ object.image.url }}"
+                      style="width:64px;height:64px;object-fit:cover;
+                              border-radius:8px;border:1px solid #e5e7eb;">
+
+                  <button type="button"
+                          class="remove-existing"
+                          style="position:absolute; top:-6px; right:-6px;
+                                width:18px; height:18px;
+                                border-radius:50%;
+                                background:#fff;
+                                border:1px solid #d1d5db;
+                                cursor:pointer;
+                                font-size:10px;
+                                display:flex;
+                                align-items:center;
+                                justify-content:center;">
+                      ✕
+                  </button>
+              </div>
+          </div>
           {% endif %}
 
+          <!-- 🔹 New Upload Preview -->
+          <div id="previewStrip"
+              style="display:flex; flex-wrap:wrap; gap:8px; margin-top:10px;"></div>
+
+          <!-- Count -->
+          <p id="countBadge"
+            style="display:none; font-size:12px; margin-top:6px;"></p>
+
+            <!-- Upload Box -->
+            <div id="dropZone"
+                class="border border-dashed border-base-300 rounded-lg p-5 text-center cursor-pointer bg-base-200 hover:bg-base-300 transition"
+                onclick="document.getElementById('image').click()">
+
+                <input id="image" name="image" type="file" accept="image/*" class="hidden">
+                <p>Click to upload profile image</p>
+            </div>
+            {% comment %} Images error {% endcomment %}
+            {% for error in form.image.errors %}
+              <p class="text-error text-xs mt-1">{{ error }}</p>
+            {% endfor %}
+
+            {% block extra_js %}
+                <script src="{% static 'js/image_upload_preview.js' %}"></script>
+
+                <script>
+                initImageUpload({
+                    inputId: 'image',
+                    stripId: 'previewStrip',
+                    dropZoneId: 'dropZone',
+                    countBadgeId: 'countBadge',
+
+                    // optional → only works if element exists
+                    existingContainerId: 'existingImage',
+                });
+                </script>
+            {% endblock %}
+        </div>
+
+        <div class="divider my-4"></div>
+
+        <div class="flex items-center justify-end gap-3">
+          {% if object %}
+            <a href="{% url 'rider_application_detail' object.pk %}" class="btn btn-ghost btn-sm">Cancel</a>
+          {% else %}
+            <a href="{% url 'rider_application_list' %}" class="btn btn-ghost btn-sm">Cancel</a>
+          {% endif %}
           <button type="submit" class="btn btn-primary btn-sm">
             {% if object %}Save Changes{% else %}Submit Application{% endif %}
           </button>
@@ -75,6 +225,93 @@
       </form>
     </div>
   </div>
-
 </div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  const COUNTRIES_URL = "{% url 'ajax_load_countries' %}";
+  const CITIES_URL    = "{% url 'ajax_load_cities' %}";
+  const AREAS_URL     = "{% url 'ajax_load_areas' %}";
+  const ZONES_URL     = "{% url 'ajax_load_zones' %}";
+
+  // For edit mode, seed from existing instance values
+  const INIT_COUNTRY = "{{ object.country_id|default:'' }}";
+  const INIT_CITY    = "{{ object.city_id|default:'' }}";
+  const INIT_AREA    = "{{ object.area_id|default:'' }}";
+  const INIT_ZONE    = "{{ object.zone_id|default:'' }}";
+
+  const countryEl = document.getElementById('id_country_select');
+  const cityEl    = document.getElementById('id_city_select');
+  const areaEl    = document.getElementById('id_area_select');
+  const zoneEl    = document.getElementById('id_zone_select');
+
+  // Hidden inputs that Django validates
+  const countryHidden = document.getElementById('id_country_id');
+  const cityHidden    = document.getElementById('id_city_id');
+  const areaHidden    = document.getElementById('id_area_id');
+  const zoneHidden    = document.getElementById('id_zone_id');
+
+  const populateSelect = (selectEl, hiddenEl, data, selectedId, placeholder) => {
+    selectEl.innerHTML = `<option value="">-- ${placeholder} --</option>`;
+    data.forEach(item => {
+      const opt = document.createElement('option');
+      opt.value = item.id;
+      opt.textContent = item.name_bn || item.name_en;
+      if (String(item.id) === String(selectedId)) opt.selected = true;
+      selectEl.appendChild(opt);
+    });
+    // Sync hidden on initial populate if a value is selected
+    if (selectedId) hiddenEl.value = selectedId;
+    selectEl.toggleAttribute("required", data.length > 0);
+  };
+
+  // Keep hidden inputs in sync with visible selects
+  countryEl.addEventListener('change', () => { countryHidden.value = countryEl.value; });
+  cityEl.addEventListener('change',    () => { cityHidden.value    = cityEl.value; });
+  areaEl.addEventListener('change',    () => { areaHidden.value    = areaEl.value; });
+  zoneEl.addEventListener('change',    () => { zoneHidden.value    = zoneEl.value; });
+
+  const fetchJSON = async (url) => {
+    try {
+      const res = await fetch(url);
+      if (!res.ok) throw new Error(`HTTP ${res.status}`);
+      return await res.json();
+    } catch (err) { console.error('AJAX error:', url, err); return []; }
+  };
+
+  countryEl.addEventListener('change', async () => {
+    cityEl.innerHTML  = '<option value="">-- Select City --</option>';
+    areaEl.innerHTML  = '<option value="">-- Select Area --</option>';
+    zoneEl.innerHTML  = '<option value="">-- Select Zone --</option>';
+    cityHidden.value = areaHidden.value = zoneHidden.value = '';
+    if (!countryEl.value) return;
+    populateSelect(cityEl, cityHidden, await fetchJSON(`${CITIES_URL}?country_id=${countryEl.value}`), '', 'Select City');
+  });
+
+  cityEl.addEventListener('change', async () => {
+    areaEl.innerHTML = '<option value="">-- Select Area --</option>';
+    zoneEl.innerHTML = '<option value="">-- Select Zone --</option>';
+    areaHidden.value = zoneHidden.value = '';
+    if (!cityEl.value) return;
+    populateSelect(areaEl, areaHidden, await fetchJSON(`${AREAS_URL}?city_id=${cityEl.value}`), '', 'Select Area');
+  });
+
+  areaEl.addEventListener('change', async () => {
+    zoneEl.innerHTML = '<option value="">-- Select Zone --</option>';
+    zoneHidden.value = '';
+    if (!areaEl.value) return;
+    populateSelect(zoneEl, zoneHidden, await fetchJSON(`${ZONES_URL}?area_id=${areaEl.value}`), '', 'Select Zone');
+  });
+
+  (async () => {
+    populateSelect(countryEl, countryHidden, await fetchJSON(COUNTRIES_URL), INIT_COUNTRY, 'Select Country');
+    if (!INIT_COUNTRY) return;
+    populateSelect(cityEl, cityHidden, await fetchJSON(`${CITIES_URL}?country_id=${INIT_COUNTRY}`), INIT_CITY, 'Select City');
+    if (!INIT_CITY) return;
+    populateSelect(areaEl, areaHidden, await fetchJSON(`${AREAS_URL}?city_id=${INIT_CITY}`), INIT_AREA, 'Select Area');
+    if (!INIT_AREA) return;
+    populateSelect(zoneEl, zoneHidden, await fetchJSON(`${ZONES_URL}?area_id=${INIT_AREA}`), INIT_ZONE, 'Select Zone');
+  })();
+</script>
 {% endblock %}

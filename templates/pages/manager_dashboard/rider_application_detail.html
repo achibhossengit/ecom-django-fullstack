@@ -52,22 +52,71 @@
       <div class="divider my-0"></div>
 
       <dl class="grid grid-cols-1 sm:grid-cols-2 gap-x-6 gap-y-4">
+
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Phone Number</dt>
+          <dd class="font-medium">{{ application.phone_number }}</dd>
+        </div>
+
         <div>
           <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">NID Number</dt>
           <dd class="font-medium">{{ application.nid_number }}</dd>
         </div>
+
         <div>
           <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Vehicle Type</dt>
           <dd class="font-medium">{{ application.get_vehicle_type_display }}</dd>
         </div>
+
         <div>
           <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">License Number</dt>
           <dd class="font-medium">{{ application.license_number }}</dd>
         </div>
+
         <div>
           <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Applied On</dt>
           <dd class="font-medium">{{ application.applied_at|date:"N j, Y, g:i a" }}</dd>
         </div>
+
+        <div>
+          <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Service Area</dt>
+          <dd class="font-medium">
+            {% if address %}
+              {% if application.zone_id %}
+                {{ address.name_en }}
+                <span class="text-base-content/40 font-normal text-xs">
+                  · {{ address.area.name_en }}, {{ address.area.city.name_en }}, {{ address.area.city.country.name_en }}
+                </span>
+              {% elif application.area_id %}
+                {{ address.name_en }}
+                <span class="text-base-content/40 font-normal text-xs">
+                  · {{ address.city.name_en }}, {{ address.city.country.name_en }}
+                </span>
+              {% elif application.city_id %}
+                {{ address.name_en }}
+                <span class="text-base-content/40 font-normal text-xs">
+                  · {{ address.country.name_en }}
+                </span>
+              {% else %}
+                {{ address.name_en }}
+              {% endif %}
+            {% else %}
+              <span class="italic text-base-content/30">Not specified</span>
+            {% endif %}
+          </dd>
+        </div>
+
+        {% if application.image %}
+          <div class="sm:col-span-2">
+            <dt class="text-xs font-medium text-base-content/40 uppercase tracking-wide mb-1">Document Photo</dt>
+            <dd>
+              <img src="{{ application.image.url }}"
+                  alt="Application document"
+                  class="rounded-lg max-h-48 border border-base-200 object-cover">
+            </dd>
+          </div>
+        {% endif %}
+
       </dl>
 
     </div>

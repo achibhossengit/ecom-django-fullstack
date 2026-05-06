@@ -20,7 +20,9 @@ class RiderProfile(models.Model):
     )
     full_name = models.CharField(max_length=200)
     profile_image = models.ImageField(upload_to='rider_profiles', null=True, blank=True)
+    nid_number = models.CharField(max_length=20)
     phone_number = models.CharField(max_length=20)
+    license_number = models.CharField(max_length=30)
     vehicle_type = models.CharField(
         max_length=20,
         choices=VEHICLE_TYPE_CHOICES
@@ -45,12 +47,18 @@ class RiderApplication(models.Model):
         related_name="rider_applications"
     )
     full_name = models.CharField(max_length=100)
+    image = models.ImageField(upload_to='rider_applications', null=True, blank=True)
     nid_number = models.CharField(max_length=20)
+    phone_number = models.CharField(max_length=20)
     vehicle_type = models.CharField(
         max_length=20,
         choices=VEHICLE_TYPE_CHOICES
     )
     license_number = models.CharField(max_length=30)
+    country_id = models.IntegerField()
+    city_id = models.IntegerField()
+    area_id = models.IntegerField()
+    zone_id = models.IntegerField(blank=True, null=True)
     status = models.CharField(
         max_length=20,
         choices=STATUS_CHOICES,

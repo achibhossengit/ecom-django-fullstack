@@ -5,6 +5,7 @@ from django.views.generic import ListView, CreateView, DetailView, UpdateView, D
 from django.urls import reverse_lazy, reverse
 from django.contrib import messages
 from django.contrib.auth.models import Group
+from core.models import Country, City, Area, Zone
 
 from .models import RiderApplication, RiderProfile, RiderAddress
 from .forms import RiderApplicationForm, RiderApplicationStatusForm, RiderAddressForm, RiderProfileForm
@@ -61,10 +62,11 @@ class RiderApplicationAddView(LoginRequiredMixin, PermissionRequiredMixin, Creat
         return super().form_valid(form)
 
 
-class RiderApplicationDetailView(LoginRequiredMixin, DetailView):
+class RiderApplicationDetailView(LoginRequiredMixin, PermissionRequiredMixin, DetailView):
     model = RiderApplication
     template_name = "pages/my_dashboard/rider_application_detail.html"
     context_object_name = "application"
+    permission_required = "rider.view_riderapplication"
 
     def get_queryset(self):
         # Users can only see their own applications
@@ -92,6 +94,20 @@ class RiderApplicationDetailView(LoginRequiredMixin, DetailView):
             context["lock_message"] = None  # pending is editable — no lock message needed here
         else:  # rejected
             context["lock_message"] = "This application was rejected and can no longer be modified or deleted."
+
+
+        if app.zone_id:
+            address = Zone.objects.select_related("area__city__country").get(pk=app.zone_id)
+        elif app.area_id:
+            address = Area.objects.select_related("city__country").get(pk=app.area_id)
+        elif app.city_id:
+            address = City.objects.select_related("country").get(pk=app.city_id)
+        elif app.country_id:
+            address = Country.objects.get(pk=app.country_id)
+        else:
+            address = None
+
+        context["address"] = address
 
         return context
 
@@ -181,9 +197,24 @@ class RiderApplicationManagerDetailView(LoginRequiredMixin, PermissionRequiredMi
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
+        app = self.object
         user = self.request.user
+
         context["can_change_status"] = user.has_perm("rider.add_riderprofile")
         context["can_delete"] = user.has_perm("rider.delete_riderprofile")
+
+        if app.zone_id:
+            address = Zone.objects.select_related("area__city__country").get(pk=app.zone_id)
+        elif app.area_id:
+            address = Area.objects.select_related("city__country").get(pk=app.area_id)
+        elif app.city_id:
+            address = City.objects.select_related("country").get(pk=app.city_id)
+        elif app.country_id:
+            address = Country.objects.get(pk=app.country_id)
+        else:
+            address = None
+
+        context["address"] = address
         return context
 
 
@@ -209,7 +240,7 @@ class RiderApplicationManagerUpdateView(LoginRequiredMixin, PermissionRequiredMi
             full_name = application.full_name or user.first_name or ""
             phone_number = getattr(application, "phone_number", "")
             vehicle_type = application.vehicle_type
-            RiderProfile.objects.get_or_create(
+            rider, _ = RiderProfile.objects.get_or_create(
                 user=user,
                 defaults={
                     "full_name": full_name,
@@ -218,6 +249,16 @@ class RiderApplicationManagerUpdateView(LoginRequiredMixin, PermissionRequiredMi
                     "is_active": False,
                 },
             )
+            kwargs = {
+                "rider": rider,
+                "country_id": application.country_id,
+                "city_id": application.city_id,
+                "area_id": application.area_id,
+            }
+            if application.zone_id:
+                kwargs["zone_id"] = application.zone_id
+            RiderAddress.objects.get_or_create(**kwargs)
+
             # Add user to the Rider group
             rider_group, _ = Group.objects.get_or_create(name="rider")
             application.user.groups.add(rider_group)

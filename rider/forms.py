@@ -6,7 +6,24 @@ from .models import RiderApplication, RiderAddress, RiderProfile
 class RiderApplicationForm(FancyFormFieldMixin, forms.ModelForm):
     class Meta:
         model = RiderApplication
-        fields = ["full_name", "nid_number", "vehicle_type", "license_number"]
+        fields = [
+            "full_name",
+            "phone_number",
+            "nid_number",
+            "vehicle_type",
+            "license_number",
+            "image",
+            "country_id",
+            "city_id",
+            "area_id",
+            "zone_id",
+        ]
+        widgets = {
+            "country_id": forms.HiddenInput(),
+            "city_id":    forms.HiddenInput(),
+            "area_id":    forms.HiddenInput(),
+            "zone_id":    forms.HiddenInput(),
+        }
         
 
 # =====================
