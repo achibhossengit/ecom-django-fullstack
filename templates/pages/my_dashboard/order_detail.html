@@ -1,0 +1,61 @@
+{% extends "layouts/my_dashboard.html" %}
+
+{% block content %}
+<div class="max-w-3xl mx-auto card flex flex-col gap-2">
+    <div class="bg-base-200 card-body rounded-xl">
+        <div class="flex justify-between items-center">
+            <h3 class="font-semibold text-lg mb-3">Items</h3>
+            <a href="#" class="btn btn-primary btn-outline btn-sm">Track Order</a>
+        </div>
+        <table class="table table-sm">
+            <thead>
+                <tr>
+                    <th>Product</th>
+                    <th>SKU</th>
+                    <th>Price</th>
+                    <th>Qty</th>
+                    <th class="text-end">Total</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for item in items %}
+                <tr>
+                    <td><a href="#" class="text-primary ">{{ item.product_name }}</a></td>
+                    <td>{{ item.sku }}</td>
+                    <td>৳{{ item.price }}</td>
+                    <td>{{ item.quantity }}</td>
+                    <td class="text-end">৳{{ item.total_price }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        <div class="divider"></div>
+        <div class="text-right space-y-2 px-2">
+            <p>Subtotal: <strong>৳{{ order.subtotal }}</strong></p>
+            <p>Delivery: <strong>৳{{ order.delivery_charge }}</strong></p>
+            <p class="text-lg font-bold">Total: ৳{{ order.total }}</p>
+        </div>
+    </div>
+    <div class="bg-base-200 card-body rounded-xl">
+        <h3 class="font-semibold text-lg mb-2">Delivery Address</h3>
+        <div class="space-y-1">
+            <p>{{ address.name }} <span class="badge badge-secondary mt-1">{{ address.get_type_display }}</span></p>                
+            <p>{{ address.phone_number }}</p>
+            <p>{{ address.get_full_address }}</p>
+            <p>{{ address.description }}</p>
+        </div>
+    </div>
+
+
+    <div class="flex gap-3 justify-between mt-6 flex-wrap">
+        <div>
+            <a href="{% url "customer_order_cancel" order.id %}" class="btn btn-error btn-outline {% if not can_cancel %}btn-disabled{% endif %}">Cancel Order</a>
+        </div>
+
+        <div class="flex gap-3">
+            <a href="#" class="btn btn-primary btn-outline">Payment History</a>
+            <a href="#" class="btn btn-primary {% if not has_pending_payment %}btn-disabled{% endif %}">Pay Now</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

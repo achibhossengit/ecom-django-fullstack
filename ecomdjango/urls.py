@@ -8,9 +8,9 @@ urlpatterns = [
     path('admin/', admin.site.urls),
     path('accounts/', include('allauth.urls')),
     path('my-dashboard/', include('users.urls')),
+    path('', include('order.urls')),
     path('', include('rider.urls')),
     path('cart/', include('cart.urls')),
     path('manager-dashboard/', include('product.urls')),
-    # path('manager-dashboard/', include('order.urls')),
     path('', include('core.urls')),
 ] +static(settings.STATIC_URL, document_root=settings.STATIC_ROOT) +static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)+ debug_toolbar_urls()

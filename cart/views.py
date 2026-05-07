@@ -81,6 +81,7 @@ class CartView(TemplateView):
         # ========================
         else:
             active_address = None
+            cart = None
             cart_data = request.session.get('cart', [])
             cart_items = []
             total_price = 0
@@ -103,6 +104,7 @@ class CartView(TemplateView):
         grand_total = total_price + shipping_charge
 
         context = {
+            "cart": cart,
             "cart_items": cart_items,
             "total_price": total_price,
             "shipping_charge": shipping_charge,

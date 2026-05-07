@@ -224,10 +224,26 @@
             </div>
           </div>
           <div class="flex justify-end mt-5">
-            <a href="#" class="btn btn-primary btn-sm">
-              Proceed to Checkout
-            </a>
+            {% if user.is_authenticated %}
+              <form action="{% url 'customer_order_place' %}" method="post">
+                {% csrf_token %}
+                <input type="hidden" name="cart_id" value="{{ cart.id }}">
+                <input type="hidden" name="address_id" value="{{ active_address.id }}">
+                <button 
+                  type="submit" 
+                  class="btn btn-primary btn-sm"
+                  {% if not cart or not active_address %}disabled{% endif %}
+                >
+                  Proceed to Checkout
+                </button>
+              </form>
+            {% else %}
+              <a href="{% url 'login' %}?next={% url 'my_cart' %}" class="btn btn-primary btn-sm">
+                Proceed to Checkout
+              </a>
+            {% endif %}
           </div>
+
         </div>
       </div>
 
