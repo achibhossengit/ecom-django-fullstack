@@ -156,27 +156,77 @@
 
         <div class="divider my-4"></div>
 
-      <div class="">
+      <div class="flex justify-between gap-5 flex-wrap">
+        {% comment %} Address Section {% endcomment %}
+        <div class="flex-1 min-w-80 bg-base-200 rounded-xl px-5 py-6 flex flex-col gap-4">
+          
+          {% comment %} Header {% endcomment %}
+          <div class="flex items-center justify-between">
+            <h2 class="text-xl font-semibold">Shipping Address</h2>
+            <a href="{% url 'my_addresses' %}" class="btn btn-sm btn-outline">Show All</a>
+          </div>
+
+          {% if active_address %}
+          <div class="border border-base-300 rounded-xl divide-y divide-base-300 overflow-hidden">
+            
+            {% comment %} Active Address {% endcomment %}
+            <div class="flex items-start gap-3 p-4">
+              <input type="radio" checked class="radio radio-primary mt-1" disabled />
+              <div class="flex-1">
+                <p class="font-semibold text-sm text-base-content">
+                  {{ active_address.name }} <span class="text-xs text-base-content/60">({{ active_address.type }})</span>
+                </p>
+                <p class="text-sm text-base-content/80 mt-1">
+                  <span class="text-base-content/50">Phone:</span> {{ active_address.phone_number }}
+                </p>
+                <p class="text-sm text-base-content/80 mt-1">
+                  {{ active_address.get_full_address }}
+                </p>
+                {% if active_address.description %}
+                  <p class="text-sm text-base-content/70 mt-1">{{ active_address.description }}</p>
+                {% endif %}
+              </div>
+            </div>
+          </div>
+
+          {% else %}
+          <div class="text-center text-base-content/40">
+            <svg xmlns="http://www.w3.org/2000/svg" class="w-10 h-10 mx-auto mb-3 opacity-30"
+                fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="1.5">
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827
+                      0l-4.244-4.243a8 8 0 1111.314 0z"/>
+              <path stroke-linecap="round" stroke-linejoin="round"
+                    d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+            </svg>
+            <p class="text-sm">No addresses saved yet.</p>
+            <a href="{% url 'my_addresses_add' %}" class="btn btn-primary btn-sm mt-3">Add Address</a>
+          </div>
+          {% endif %}
+        </div>
+
 
         {# Price summary #}
-        <div class="bg-base-200 rounded-xl px-5 py-4 flex flex-col gap-2 min-w-60">
-          <div class="flex justify-between text-sm text-base-content/70">
-            <span>Subtotal</span>
-            <span>৳ {{ total_price }}</span>
-          </div>
-          <div class="flex justify-between text-sm text-base-content/70">
-            <span>Shipping</span>
-            <span>৳ {{ shipping_charge }}</span>
-          </div>
-          <div class="divider my-1"></div>
-          <div class="flex justify-between text-sm font-semibold text-base-content">
-            <span>Total</span>
-            <span>৳ {{ grand_total }}</span>
+        <div class="flex-1 min-w-80 bg-base-200 rounded-xl px-5 py-4 flex flex-col gap-2 justify-between">
+          <div>
+            <div class="flex justify-between text-sm text-base-content/70">
+              <span>Subtotal</span>
+              <span>৳ {{ total_price }}</span>
+            </div>
+            <div class="flex justify-between text-sm text-base-content/70">
+              <span>Shipping</span>
+              <span>৳ {{ shipping_charge }}</span>
+            </div>
+            <div class="divider my-1"></div>
+            <div class="flex justify-between text-sm font-semibold text-base-content">
+              <span>Total</span>
+              <span>৳ {{ grand_total }}</span>
+            </div>
           </div>
           <div class="flex justify-end mt-5">
-            <button class="btn btn-success btn-sm">
+            <a href="#" class="btn btn-primary btn-sm">
               Proceed to Checkout
-            </button>
+            </a>
           </div>
         </div>
       </div>

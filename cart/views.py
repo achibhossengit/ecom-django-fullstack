@@ -4,6 +4,7 @@ from django.views import View
 from django.views.generic import TemplateView
 from product.models import Product
 from .models import Cart, CartItem
+from users.models import UserAddress
 
 
 class AddToCartView(View):
@@ -67,6 +68,7 @@ class CartView(TemplateView):
         # Logged-in user → DB cart
         # =======================
         if request.user.is_authenticated:
+            active_address = request.user.addresses.filter(is_active=True).last()
             cart, _ = Cart.objects.get_or_create(user_id=request.user.id)
             cart_items = CartItem.objects.filter(cart=cart).select_related(
                 'product', 'product__inventory'
@@ -78,6 +80,7 @@ class CartView(TemplateView):
         # Guest user → session cart
         # ========================
         else:
+            active_address = None
             cart_data = request.session.get('cart', [])
             cart_items = []
             total_price = 0
@@ -104,6 +107,7 @@ class CartView(TemplateView):
             "total_price": total_price,
             "shipping_charge": shipping_charge,
             "grand_total": grand_total,
+            "active_address": active_address,
         }
         return context
 
