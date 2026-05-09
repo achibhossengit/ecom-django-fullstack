@@ -8,6 +8,9 @@ from .views import (
     OrderDetailManagerView,
     OrderAssignRiderManagerView,
     OrderCancelManagerView,
+    OrderListRiderView,
+    OrderDetailRiderView,
+    OrderStatusUpdateRiderView
 )
 
 urlpatterns = [
@@ -22,4 +25,10 @@ urlpatterns = [
     path('manager-dashboard/orders/<int:pk>/', OrderDetailManagerView.as_view(), name='manager_order_detail'),
     path('manager-dashboard/orders/<int:pk>/cancel/', OrderCancelManagerView.as_view(), name='manager_order_cancel'),
     path('manager-dashboard/orders/<int:pk>/assign-rider/', OrderAssignRiderManagerView.as_view(), name='manager_order_assign_rider'),
+    
+
+    # rider
+    path('rider-dashboard/orders/', OrderListRiderView.as_view(), name='rider_order_list'),
+    path('rider-dashboard/orders/<int:pk>/', OrderDetailRiderView.as_view(), name='rider_order_detail'),
+    path('rider-dashboard/orders/<int:pk>/update-status/', OrderStatusUpdateRiderView.as_view(), name='rider_order_status_update'),
 ]

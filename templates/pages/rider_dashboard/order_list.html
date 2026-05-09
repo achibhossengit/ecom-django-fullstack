@@ -1,0 +1,83 @@
+{% extends "layouts/rider_dashboard.html" %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-6">My Assigned Orders</h2>
+
+    <form method="get" class="flex gap-3 mb-6 flex-wrap">
+        <select name="status" id="status-filter" class="select select-bordered select-sm">
+            <option value="">All Statuses</option>
+            {% for value, label in rider_status_choices %}
+            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+    </form>
+
+    {% if orders %}
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr>
+                    <td>#{{ order.id }}</td>
+                    <td>
+                        <p class="font-medium">{{ order.customer_name }}</p>
+                        <p class="text-xs opacity-60">{{ order.customer_email }}</p>
+                    </td>
+                    <td>{{ order.created_at|date:"d M Y" }}</td>
+                    <td>৳{{ order.total }}</td>
+                    <td>
+                        {% if order.payment_status == 'paid' %}
+                        <span class="badge badge-success badge-sm">Paid</span>
+                        {% else %}
+                        <span class="badge badge-warning badge-sm">Unpaid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        {% if order.current_status == 'delivered' %}
+                        <span class="badge badge-success badge-sm">{{ order.get_current_status_display }}</span>
+                        {% else %}
+                        <span class="badge badge-warning badge-sm">{{ order.get_current_status_display }}</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <a href="{% url 'rider_order_detail' order.pk %}" class="btn btn-xs btn-ghost">View</a>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-20 opacity-50">
+        <p class="text-lg">No orders found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    document.getElementById('status-filter').addEventListener('change', function () {
+        const status = this.value;
+        const url = new URL(window.location.href);
+        if (status) {
+            url.searchParams.set('status', status);
+        } else {
+            url.searchParams.delete('status');
+        }
+        window.location.href = url.toString();
+    });
+</script>
+{% endblock %}

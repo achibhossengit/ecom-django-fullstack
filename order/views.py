@@ -221,7 +221,6 @@ class OrderDetailManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
             rider = None
             
         can_cancel = order.current_status not in [OrderStatus.DELIVERED, OrderStatus.CANCELLED] and order.payment_status == order.PaymentStatus.UNPAID
-        print(can_cancel)
         can_assign_rider = (
             order.current_status == OrderStatus.PROCESSSING
             and order.payment_status == order.PaymentStatus.PAID
@@ -279,7 +278,6 @@ class OrderCancelManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
                 OrderEvent.objects.create(order=order, status=OrderStatus.CANCELLED)
 
         except Exception as e:
-            print(e)
             messages.error(request, "Something went wrong. Please try again.")
             return redirect('manager_order_detail', pk=pk)
 
@@ -361,3 +359,93 @@ class OrderAssignRiderManagerView(LoginRequiredMixin, PermissionRequiredMixin, V
                 )
 
         return RiderProfile.objects.filter(is_active=True)
+
+
+# ====================
+# Rider related views
+# ====================
+RIDER_STATUS_TRANSITIONS = {
+    OrderStatus.ASSIGNED_RIDER: OrderStatus.ORDER_PICKED_UP,
+    OrderStatus.ORDER_PICKED_UP: OrderStatus.ON_THE_WAY,
+    OrderStatus.ON_THE_WAY: OrderStatus.DELIVERED,
+}
+
+def get_next_rider_status(current_status):
+    return RIDER_STATUS_TRANSITIONS.get(current_status)
+
+
+class OrderListRiderView(LoginRequiredMixin, View):
+    def get(self, request):
+        try:
+            rider_profile = RiderProfile.objects.get(user=request.user)
+        except RiderProfile.DoesNotExist:
+            messages.error(request, "You are not registered as a rider.")
+            return redirect('home')
+
+        status_filter = request.GET.get('status', '')
+
+        orders = Order.objects.filter(
+            rider_id=rider_profile.id
+        ).exclude(
+            current_status__in=[OrderStatus.PROCESSSING, OrderStatus.CANCELLED]
+        ).order_by('-created_at')
+
+        if status_filter:
+            orders = orders.filter(current_status=status_filter)
+
+        rider_status_choices = [
+            (OrderStatus.ASSIGNED_RIDER, OrderStatus.ASSIGNED_RIDER.label),
+            (OrderStatus.ORDER_PICKED_UP, OrderStatus.ORDER_PICKED_UP.label),
+            (OrderStatus.ON_THE_WAY, OrderStatus.ON_THE_WAY.label),
+            (OrderStatus.DELIVERED, OrderStatus.DELIVERED.label),
+        ]
+
+        return render(request, 'pages/rider_dashboard/order_list.html', {
+            'orders': orders,
+            'status_filter': status_filter,
+            'rider_status_choices': rider_status_choices,
+        })
+
+class OrderDetailRiderView(LoginRequiredMixin, View):
+    def get(self, request, pk):
+        try:
+            rider_profile = RiderProfile.objects.get(user=request.user)
+        except RiderProfile.DoesNotExist:
+            messages.error(request, "You are not registered as a rider.")
+            return redirect('home')
+
+        order = get_object_or_404(Order, pk=pk, rider_id=rider_profile.id)
+        next_status = get_next_rider_status(order.current_status)
+
+        return render(request, 'pages/rider_dashboard/order_detail.html', {
+            'order': order,
+            'next_status': next_status,
+        })
+
+
+class OrderStatusUpdateRiderView(LoginRequiredMixin, View):
+    def post(self, request, pk):
+        try:
+            rider_profile = RiderProfile.objects.get(user=request.user)
+        except RiderProfile.DoesNotExist:
+            messages.error(request, "You are not registered as a rider.")
+            return redirect('home')
+
+        order = get_object_or_404(Order, pk=pk, rider_id=rider_profile.id)
+        next_status = get_next_rider_status(order.current_status)
+
+        if not next_status:
+            messages.error(request, "You cannot update the status of this order.")
+            return redirect('rider_order_detail', pk=pk)
+
+        try:
+            with transaction.atomic():
+                order.current_status = next_status
+                order.save()
+                OrderEvent.objects.create(order=order, status=next_status)
+        except Exception:
+            messages.error(request, "Something went wrong. Please try again.")
+            return redirect('rider_order_detail', pk=pk)
+
+        messages.success(request, f"Order status updated to {order.get_current_status_display()}.")
+        return redirect('rider_order_detail', pk=pk)
