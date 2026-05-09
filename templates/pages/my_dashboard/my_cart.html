@@ -238,7 +238,7 @@
                 </button>
               </form>
             {% else %}
-              <a href="{% url 'login' %}?next={% url 'my_cart' %}" class="btn btn-primary btn-sm">
+              <a href="{% url 'account_login' %}?next={% url 'my_cart' %}" class="btn btn-primary btn-sm">
                 Proceed to Checkout
               </a>
             {% endif %}
