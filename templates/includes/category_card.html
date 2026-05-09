@@ -7,14 +7,16 @@
 
   <!-- Background image -->
   <figure class="absolute inset-0 w-full h-full">
-    {% if category.image %}
-      <img src="{{ category.image }}" alt="{{ category.name }}" class="w-full h-full object-cover" />
+    {% with default_image=category.images.first %}
+    {% if default_image %}
+      <img src="{{ default_image.image.url }}" alt="{{ category.name }}" class="w-full h-full object-cover" />
     {% else %}
-      <div class="w-full h-full flex items-center justify-center bg-base-300">
-        <span class="text-base-content/50">{% trans "No Image" %}</span>
-      </div>
+    <div class="w-full h-full flex items-center justify-center bg-base-300">
+      <span class="text-base-content/50">{% trans "No Image" %}</span>
+    </div>
     {% endif %}
   </figure>
+  {% endwith %}
 
   <!-- Overlay -->
   <div class="absolute inset-0 flex flex-col justify-end p-5 {% if is_large %}p-6{% endif %} bg-leaner-to-t from-base-content/70 to-transparent">
