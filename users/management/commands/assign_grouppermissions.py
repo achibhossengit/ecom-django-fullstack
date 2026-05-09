@@ -13,6 +13,7 @@ class Command(BaseCommand):
 
             "order.change_order",
             "order.view_order",
+            "order.cancel_order",
 
             "order.view_orderaddress",
 

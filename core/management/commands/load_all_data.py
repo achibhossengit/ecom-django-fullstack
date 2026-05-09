@@ -21,6 +21,7 @@ class Command(BaseCommand):
             "load_rider",
             "load_product",
             "load_cart",
+            "load_order",
             
             # execute it most last, because it has some dependency over app
             "assign_grouppermissions",

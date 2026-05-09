@@ -6,6 +6,7 @@ from django.contrib import messages
 from cart.models import Cart, CartItem
 from users.models import UserAddress
 from product.models import Inventory, QuantityHistory, Product
+from rider.models import RiderProfile, RiderAddress
 from .models import Order, OrderItem, OrderAddress, OrderEvent, OrderStatus
 
 
@@ -97,7 +98,6 @@ class OrderCreateCustomerView(LoginRequiredMixin, PermissionRequiredMixin, View)
                 OrderEvent.objects.create(order=order, status=OrderStatus.PROCESSSING)
 
         except Exception as e:
-            print(e)
             messages.error(request, "Something went wrong while placing your order. Please try again.")
             return redirect('my_cart')
 
@@ -180,3 +180,184 @@ class OrderCancelCustomerView(LoginRequiredMixin, PermissionRequiredMixin, View)
 
         messages.success(request, "Order cancelled successfully.")
         return redirect('customer_order_detail', pk=pk)
+
+
+
+
+# =======================
+# Manager related views
+# =======================
+class OrderListManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'order.view_order'
+
+    def get(self, request):
+        status_filter = request.GET.get('status', OrderStatus.PROCESSSING)
+        payment_filter = request.GET.get('payment_status', '')
+
+        orders = Order.objects.all().order_by('-created_at')
+
+        if status_filter:
+            orders = orders.filter(current_status=status_filter)
+        if payment_filter:
+            orders = orders.filter(payment_status=payment_filter)
+
+        return render(request, 'pages/manager_dashboard/order_list.html', {
+            'orders': orders,
+            'status_filter': status_filter,
+            'payment_filter': payment_filter,
+            'status_choices': OrderStatus.choices,
+            'payment_choices': Order.PaymentStatus.choices,
+        })
+
+
+class OrderDetailManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'order.view_order'
+
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        if order.rider_id:
+            rider = get_object_or_404(RiderProfile, pk=order.rider_id)
+        else:
+            rider = None
+            
+        can_cancel = order.current_status not in [OrderStatus.DELIVERED, OrderStatus.CANCELLED] and order.payment_status == order.PaymentStatus.UNPAID
+        print(can_cancel)
+        can_assign_rider = (
+            order.current_status == OrderStatus.PROCESSSING
+            and order.payment_status == order.PaymentStatus.PAID
+        )
+        context = {
+            'order': order,
+            'rider': rider,
+            'can_cancel': can_cancel,
+            'can_assign_rider': can_assign_rider,
+        }
+
+        return render(request, 'pages/manager_dashboard/order_detail.html', context=context)
+        
+
+class OrderCancelManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'order.cancel_order'
+
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+
+        if order.current_status in [OrderStatus.DELIVERED, OrderStatus.CANCELLED]:
+            messages.error(request, "This order cannot be cancelled.")
+            return redirect('manager_order_detail', pk=pk)
+
+        return render(request, 'pages/manager_dashboard/order_cancel_confirm.html', {'order': order})
+
+    def post(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+
+        if order.current_status in [OrderStatus.DELIVERED, OrderStatus.CANCELLED]:
+            messages.error(request, "This order cannot be cancelled.")
+            return redirect('manager_order_detail', pk=pk)
+
+        try:
+            with transaction.atomic():
+                order_items = OrderItem.objects.filter(order=order)
+
+                for item in order_items:
+                    product = Product.objects.get(pk=item.product_id)
+                    inventory = product.inventory
+                    last_quantity = inventory.quantity
+                    inventory.quantity += item.quantity
+                    inventory.save()
+
+                    QuantityHistory.objects.create(
+                        product=product,
+                        action_type=QuantityHistory.ActionType.RETURN,
+                        last_quantity=last_quantity,
+                        quantity_changed=item.quantity,
+                        created_by=request.user.id,
+                    )
+
+                order.current_status = OrderStatus.CANCELLED
+                order.save()
+                OrderEvent.objects.create(order=order, status=OrderStatus.CANCELLED)
+
+        except Exception as e:
+            print(e)
+            messages.error(request, "Something went wrong. Please try again.")
+            return redirect('manager_order_detail', pk=pk)
+
+        messages.success(request, "Order cancelled successfully.")
+        return redirect('manager_order_detail', pk=pk)
+    
+    
+class OrderAssignRiderManagerView(LoginRequiredMixin, PermissionRequiredMixin, View):
+    permission_required = 'order.change_order'
+
+    def get(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+
+        if order.current_status != OrderStatus.PROCESSSING:
+            messages.error(request, "Rider cannot be assigned at this order stage.")
+            return redirect('manager_order_detail', pk=pk)
+
+        filter_by = request.GET.get('filter_by', 'area')
+
+        try:
+            order_address = order.address
+        except OrderAddress.DoesNotExist:
+            messages.error(request, "Order has no address.")
+            return redirect('manager_order_detail', pk=pk)
+
+        riders = self._get_riders(filter_by, order_address)
+        default_rider = riders.first()
+
+        return render(request, 'pages/manager_dashboard/order_assign_rider.html', {
+            'order': order,
+            'riders': riders,
+            'default_rider': default_rider,
+            'filter_by': filter_by,
+        })
+
+    def post(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+
+        if order.current_status not in [OrderStatus.PROCESSSING, OrderStatus.ASSIGNED_RIDER]:
+            messages.error(request, "Rider cannot be assigned at this order stage.")
+            return redirect('manager_order_detail', pk=pk)
+
+        rider_id = request.POST.get('rider_id')
+        if not rider_id:
+            messages.error(request, "Please select a rider.")
+            return redirect('manager_order_assign_rider', pk=pk)
+
+        rider = get_object_or_404(RiderProfile, pk=rider_id, is_active=True)
+
+        try:
+            with transaction.atomic():
+                order.rider_id = rider.id
+                order.rider_assigned_by = request.user.id
+                order.current_status = OrderStatus.ASSIGNED_RIDER
+                order.save()
+                OrderEvent.objects.create(order=order, status=OrderStatus.ASSIGNED_RIDER)
+        except Exception:
+            messages.error(request, "Something went wrong. Please try again.")
+            return redirect('manager_order_assign_rider', pk=pk)
+
+        messages.success(request, "Rider assigned successfully.")
+        return redirect('manager_order_detail', pk=pk)
+
+    def _get_riders(self, filter_by, order_address):
+        field_map = {
+            'zone':    ('zone_id',    order_address.zone_id),
+            'area':    ('area_id',    order_address.area_id),
+            'city':    ('city_id',    order_address.city_id),
+            'country': ('country_id', order_address.country_id),
+        }
+
+        if filter_by in field_map:
+            field, value = field_map[filter_by]
+            if value:
+                return RiderProfile.objects.filter(
+                    is_active=True,
+                    addresses__is_active=True,
+                    **{f'addresses__{field}': value}
+                )
+
+        return RiderProfile.objects.filter(is_active=True)

@@ -1,0 +1,98 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block content %}
+<div class="p-6 max-w-4xl mx-auto">
+    <div class="flex items-center justify-between mb-2">
+        <h2 class="text-2xl font-bold">Assign Rider</h2>
+        <a href="{% url 'manager_order_detail' order.pk %}" class="btn btn-sm btn-ghost">Back to Order</a>
+    </div>
+    <div class="opacity-60 mb-6">
+        <p >Order #{{ order.id }} — {{ order.customer_name }}</p>
+        <p >{{order.address.get_full_address}}</p>
+    </div>
+
+    <div class="flex gap-2 flex-wrap mb-6">
+        <a href="?filter_by=zone"
+           class="btn btn-sm {% if filter_by == 'zone' %}btn-primary{% else %}btn-outline{% endif %}">
+            Riders by Zone
+        </a>
+        <a href="?filter_by=area"
+           class="btn btn-sm {% if filter_by == 'area' %}btn-primary{% else %}btn-outline{% endif %}">
+            Riders by Area
+        </a>
+        <a href="?filter_by=city"
+           class="btn btn-sm {% if filter_by == 'city' %}btn-primary{% else %}btn-outline{% endif %}">
+            Riders by City
+        </a>
+        <a href="?filter_by=country"
+           class="btn btn-sm {% if filter_by == 'country' %}btn-primary{% else %}btn-outline{% endif %}">
+            Riders by Country
+        </a>
+    </div>
+
+    <form method="post">
+        {% csrf_token %}
+
+        {% if riders %}
+        <div class="card bg-base-100 shadow mb-6">
+            <div class="card-body p-0">
+                <table class="table table-zebra w-full">
+                    <thead>
+                        <tr>
+                            <th>Select</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Vehicle</th>
+                            <th>NID</th>
+                            <th>License</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for rider in riders %}
+                        <tr>
+                            <td>
+                                <input
+                                    type="radio"
+                                    name="rider_id"
+                                    value="{{ rider.id }}"
+                                    class="radio radio-primary radio-sm"
+                                    {% if default_rider and rider.id == default_rider.id %}checked{% elif forloop.first and not default_rider %}checked{% endif %}
+                                />
+                            </td>
+                            <td>
+                                <div class="flex items-center gap-3">
+                                    {% if rider.profile_image %}
+                                    <div class="avatar">
+                                        <div class="w-8 rounded-full">
+                                            <img src="{{ rider.profile_image.url }}" alt="{{ rider.full_name }}" />
+                                        </div>
+                                    </div>
+                                    {% endif %}
+                                    <span class="font-medium">{{ rider.full_name }}</span>
+                                </div>
+                            </td>
+                            <td>{{ rider.phone_number }}</td>
+                            <td>{{ rider.get_vehicle_type_display }}</td>
+                            <td>{{ rider.nid_number }}</td>
+                            <td>{{ rider.license_number }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        <div class="flex justify-end">
+            <button type="submit" class="btn btn-primary">Confirm Assignment</button>
+        </div>
+
+        {% else %}
+        <div class="text-center py-20 opacity-50">
+            <p class="text-lg">No active riders found for this filter.</p>
+            <a href="?filter_by=country" class="btn btn-sm btn-ghost mt-3">Try broader search</a>
+        </div>
+        {% endif %}
+
+    </form>
+</div>
+{% endblock %}

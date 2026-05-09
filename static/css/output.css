@@ -3175,6 +3175,9 @@
   .mb-4 {
     margin-bottom: calc(var(--spacing) * 4);
   }
+  .mb-5 {
+    margin-bottom: calc(var(--spacing) * 5);
+  }
   .mb-6 {
     margin-bottom: calc(var(--spacing) * 6);
   }
@@ -3186,9 +3189,6 @@
   }
   .ml-1 {
     margin-left: calc(var(--spacing) * 1);
-  }
-  .ml-auto {
-    margin-left: auto;
   }
   .carousel-item {
     @layer daisyui.l1.l2.l3 {
@@ -3514,24 +3514,6 @@
   .aspect-square {
     aspect-ratio: 1 / 1;
   }
-  .divider-vertical {
-    @layer daisyui.l1.l2 {
-      --divider-m: 1rem 0;
-      &.divider {
-        height: calc(0.25rem * 4);
-        width: auto;
-        flex-direction: row;
-        &:before {
-          height: calc(0.25rem * 0.5);
-          width: 100%;
-        }
-        &:after {
-          height: calc(0.25rem * 0.5);
-          width: 100%;
-        }
-      }
-    }
-  }
   .btn-circle {
     @layer daisyui.l1.l2 {
       border-radius: calc(infinity * 1px);
@@ -3609,12 +3591,6 @@
   }
   .min-h-screen {
     min-height: 100vh;
-  }
-  .btn-wide {
-    @layer daisyui.l1.l2 {
-      width: 100%;
-      max-width: calc(0.25rem * 64);
-    }
   }
   .btn-block {
     @layer daisyui.l1.l2 {
@@ -3705,6 +3681,9 @@
   .max-w-7xl {
     max-width: var(--container-7xl);
   }
+  .max-w-10 {
+    max-width: calc(var(--spacing) * 10);
+  }
   .max-w-lg {
     max-width: var(--container-lg);
   }
@@ -3713,12 +3692,6 @@
   }
   .max-w-xs {
     max-width: var(--container-xs);
-  }
-  .min-w-60 {
-    min-width: calc(var(--spacing) * 60);
-  }
-  .min-w-64 {
-    min-width: calc(var(--spacing) * 64);
   }
   .min-w-80 {
     min-width: calc(var(--spacing) * 80);
@@ -3829,6 +3802,9 @@
   .flex-wrap {
     flex-wrap: wrap;
   }
+  .flex-wrap-reverse {
+    flex-wrap: wrap-reverse;
+  }
   .items-baseline {
     align-items: baseline;
   }
@@ -3885,6 +3861,13 @@
   }
   .gap-12 {
     gap: calc(var(--spacing) * 12);
+  }
+  .space-y-0 {
+    :where(& > :not(:last-child)) {
+      --tw-space-y-reverse: 0;
+      margin-block-start: calc(calc(var(--spacing) * 0) * var(--tw-space-y-reverse));
+      margin-block-end: calc(calc(var(--spacing) * 0) * calc(1 - var(--tw-space-y-reverse)));
+    }
   }
   .space-y-1 {
     :where(& > :not(:last-child)) {
@@ -4144,13 +4127,6 @@
   .bg-white {
     background-color: var(--color-white);
   }
-  .divider-primary {
-    @layer daisyui.l1.l2 {
-      &:before, &:after {
-        background-color: var(--color-primary);
-      }
-    }
-  }
   .from-base-content {
     --tw-gradient-from: var(--color-base-content);
     --tw-gradient-stops: var(--tw-gradient-via-stops, var(--tw-gradient-position), var(--tw-gradient-from) var(--tw-gradient-from-position), var(--tw-gradient-to) var(--tw-gradient-to-position));
@@ -4194,9 +4170,6 @@
   }
   .p-2 {
     padding: calc(var(--spacing) * 2);
-  }
-  .p-3 {
-    padding: calc(var(--spacing) * 3);
   }
   .p-4 {
     padding: calc(var(--spacing) * 4);
@@ -4323,9 +4296,6 @@
   }
   .text-right {
     text-align: right;
-  }
-  .text-start {
-    text-align: start;
   }
   .text-2xl {
     font-size: var(--text-2xl);
@@ -4829,12 +4799,6 @@
     @layer daisyui.l1.l2.l3 {
       --btn-color: var(--color-success);
       --btn-fg: var(--color-success-content);
-    }
-  }
-  .btn-warning {
-    @layer daisyui.l1.l2.l3 {
-      --btn-color: var(--color-warning);
-      --btn-fg: var(--color-warning-content);
     }
   }
   .input-error {

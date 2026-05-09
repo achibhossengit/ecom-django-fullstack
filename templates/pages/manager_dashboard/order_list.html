@@ -1,0 +1,72 @@
+{% extends "layouts/manager_dashboard.html" %}
+
+{% block content %}
+<div class="p-6">
+    <h2 class="text-2xl font-bold mb-6">Manage Orders</h2>
+
+    <form method="get" class="flex gap-3 mb-6 flex-wrap">
+        <select name="status" class="select select-bordered select-sm">
+            <option value="">All Statuses</option>
+            {% for value, label in status_choices %}
+            <option value="{{ value }}" {% if status_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <select name="payment_status" class="select select-bordered select-sm">
+            <option value="">All Payment</option>
+            {% for value, label in payment_choices %}
+            <option value="{{ value }}" {% if payment_filter == value %}selected{% endif %}>{{ label }}</option>
+            {% endfor %}
+        </select>
+        <button type="submit" class="btn btn-sm btn-primary">Filter</button>
+        <a href="{% url 'manager_order_list' %}" class="btn btn-sm btn-ghost btn-outline">Reset</a>
+    </form>
+
+    {% if orders %}
+    <div class="overflow-x-auto">
+        <table class="table table-zebra w-full">
+            <thead>
+                <tr>
+                    <th>Order #</th>
+                    <th>Customer</th>
+                    <th>Date</th>
+                    <th>Total</th>
+                    <th>Payment</th>
+                    <th>Status</th>
+                    <th></th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for order in orders %}
+                <tr 
+                onclick="window.location='{% url 'manager_order_detail' order.pk %}'" 
+                class="cursor-pointer hover:bg-base-200"
+                >
+                    <td>#{{ order.id }}</td>
+                    <td>
+                        <p class="font-medium">{{ order.customer_name }}</p>
+                        <p class="text-xs opacity-60">{{ order.customer_email }}</p>
+                    </td>
+                    <td>{{ order.created_at|date:"d M Y" }}</td>
+                    <td>৳{{ order.total }}</td>
+                    <td>
+                        {% if order.payment_status == 'paid' %}
+                        <span class="badge badge-success badge-sm">Paid</span>
+                        {% else %}
+                        <span class="badge badge-warning badge-sm">Unpaid</span>
+                        {% endif %}
+                    </td>
+                    <td>
+                        <span class="badge badge-outline badge-sm">{{ order.get_current_status_display }}</span>
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+    {% else %}
+    <div class="text-center py-20 opacity-50">
+        <p class="text-lg">No orders found.</p>
+    </div>
+    {% endif %}
+</div>
+{% endblock %}
