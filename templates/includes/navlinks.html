@@ -1,8 +1,8 @@
 {% load i18n %}
 <li><a href="{% url "homepage" %}">{% trans "Home" %}</a></li>
-<li><a href="#">{% trans "Shop" %}</a></li>
-<li><a href="#">{% trans "Categories" %}</a></li>
+<li><a href="{% url "shop_page" %}">{% trans "Shop" %}</a></li>
+<li><a href="{% url "categories_page" %}">{% trans "Categories" %}</a></li>
 {% if perms.rider.add_riderapplication %}
 <li><a href="{% url "rider_application_add" %}">{% trans "Be a Rider" %}</a></li>
 {% endif %}
-<li><a href="#">{% trans "About" %}</a></li>
+<li><a href="{% url "about" %}">{% trans "About" %}</a></li>

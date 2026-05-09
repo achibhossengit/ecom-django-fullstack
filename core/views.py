@@ -1,26 +1,121 @@
+from django.views import View
+from django.db import models
+from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
+from django.core.paginator import Paginator
 from django.shortcuts import render
 from product.models import Category, Product
 from .models import Country, City, Area, Zone
 
 def homepage(request):
-    hero_product = {
-        'name': 'Premium Linen Jacket',
-        'category': {'name': 'Fashion & Apparel'},
-        'price': 49,
-        'original_price': 69,
-        'discount_percent': 30,
-        'tag': 'new',
-        'image': 'https://images.unsplash.com/photo-1537465978529-d23b17165b3b?w=500&auto=format&fit=crop&q=60&ixlib=rb-4.1.0&ixid=M3wxMjA3fDB8MHxzZWFyY2h8Mnx8ZGVuaW0lMjBqYWNrZXR8ZW58MHx8MHx8fDA%3D'
-    }
-    
+    hero_product_qs = Product.objects.select_related(
+        'category', 'inventory'
+    ).prefetch_related('images').filter(inventory__quantity__gt=0).order_by('?').first()
+
+    if hero_product_qs:
+        default_image = hero_product_qs.images.first()
+        hero_product = {
+            'name': hero_product_qs.name,
+            'category': {'name': hero_product_qs.category.name if hero_product_qs.category else ''},
+            'price': hero_product_qs.inventory.price,
+            'original_price': None,
+            'discount_percent': None,
+            'tag': 'new',
+            'image': default_image.image.url if default_image else None,
+            'url': hero_product_qs.get_absolute_url(),
+        }
+    else:
+        hero_product = None
+
     categories = Category.objects.all()[:5]
     products = Product.objects.all().order_by("created_at").select_related('inventory').prefetch_related('images')[:12]
-    
-    context = {'categories': categories, 'products': products, "hero_product": hero_product}
+
+    context = {
+        'categories': categories,
+        'products': products,
+        'hero_product': hero_product,
+    }
     return render(request, 'pages/home.html', context=context)
 
 
+
+class ShopView(View):
+    def get(self, request):
+        products = Product.objects.select_related(
+            'category', 'inventory'
+        ).prefetch_related('images', 'reviews').order_by('-created_at')
+
+        # filters
+        search = request.GET.get('search', '')
+        category_id = request.GET.get('category', '')
+        min_price = request.GET.get('min_price', '')
+        max_price = request.GET.get('max_price', '')
+        sort = request.GET.get('sort', '')
+
+        if search:
+            products = products.filter(name__icontains=search)
+        if category_id:
+            products = products.filter(category_id=category_id)
+        if min_price:
+            products = products.filter(inventory__price__gte=min_price)
+        if max_price:
+            products = products.filter(inventory__price__lte=max_price)
+        if sort == 'price_asc':
+            products = products.order_by('inventory__price')
+        elif sort == 'price_desc':
+            products = products.order_by('-inventory__price')
+        elif sort == 'newest':
+            products = products.order_by('-created_at')
+
+        paginator = Paginator(products, 12)
+        page = request.GET.get('page', 1)
+        products = paginator.get_page(page)
+
+        categories = Category.objects.all()
+
+        return render(request, 'pages/shop.html', {
+            'products': products,
+            'categories': categories,
+            'search': search,
+            'category_id': category_id,
+            'min_price': min_price,
+            'max_price': max_price,
+            'sort': sort,
+        })
+        
+class ShopDetailView(View):
+    def get(self, request, pk):
+        product = get_object_or_404(
+            Product.objects.select_related('category', 'inventory')
+            .prefetch_related('images', 'reviews'),
+            pk=pk
+        )
+        reviews = product.reviews.all().order_by('-created_at')
+        review_count = reviews.count()
+        avg_rating = reviews.aggregate(avg=models.Avg('rating'))['avg'] or 0
+
+        return render(request, 'pages/shop_detail.html', {
+            'product': product,
+            'reviews': reviews,
+            'review_count': review_count,
+            'avg_rating': round(avg_rating, 1),
+        })
+
+class CategoryListView(View):
+    def get(self, request):
+        categories = Category.objects.prefetch_related('images').all()
+        return render(request, 'pages/categories.html', {'categories': categories})
+
+
+class AboutView(View):
+    def get(self, request):
+        return render(request, 'pages/about.html')
+
+
+
+# ===========================
+# ADDRESS RELATED CORE VIEWS
+# ==========================
 def ajax_load_countries(request):
     countries = list(Country.objects.all().values('id', 'name_en', 'name_bn'))
     return JsonResponse(countries, safe=False)

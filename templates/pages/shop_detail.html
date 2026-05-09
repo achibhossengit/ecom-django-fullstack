@@ -1,0 +1,205 @@
+{% extends "layouts/base.html" %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
+
+    <!-- Breadcrumbs -->
+    <div class="text-sm breadcrumbs mb-8">
+        <ul>
+            <li><a href="{% url 'shop_page' %}" class="opacity-60 hover:opacity-100">Shop</a></li>
+            <li><a href="#" class="opacity-60 hover:opacity-100">{{ product.category.name }}</a></li>
+            <li class="font-medium text-primary">{{ product.name }}</li>
+        </ul>
+    </div>
+
+    <div class="grid grid-cols-1 lg:grid-cols-12 gap-12 mb-20">
+
+        <!-- Left: Image Gallery (Span 7) -->
+        <div class="lg:col-span-7">
+            <div class="flex flex-col-reverse md:flex-row gap-4">
+                <!-- Vertical Thumbnails (Desktop) -->
+                {% if product.images.count > 1 %}
+                <div class="flex md:flex-col gap-3 h-fit">
+                    {% for image in product.images.all %}
+                    <button 
+                        onclick="updateMainImage(this.src)"
+                        class="thumbnail-btn group relative w-20 h-20 rounded-xl overflow-hidden border-2 {% if forloop.first %}border-primary{% else %}border-transparent{% endif %} transition-all">
+                        <img src="{{ image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover group-hover:scale-110 transition-transform">
+                    </button>
+                    {% endfor %}
+                </div>
+                {% endif %}
+
+                <!-- Main Display -->
+                <div class="flex-1 relative group">
+                    {% with default_image=product.images.first %}
+                    <div class="aspect-square overflow-hidden rounded-3xl bg-base-200 shadow-sm">
+                        {% if default_image %}
+                        <img id="main-image" src="{{ default_image.image.url }}" 
+                             alt="{{ product.name }}"
+                             class="w-full h-full object-cover transition-all duration-500 hover:scale-105" />
+                        {% else %}
+                        <div class="w-full h-full flex flex-col items-center justify-center opacity-20">
+                            <svg class="w-20 h-20" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" /></svg>
+                        </div>
+                        {% endif %}
+                    </div>
+                    {% endwith %}
+                </div>
+            </div>
+        </div>
+
+        <!-- Right: Product Info (Span 5) -->
+        <div class="lg:col-span-5">
+            <div class="space-y-6">
+                <div>
+                    <span class="badge badge-outline badge-sm mb-4 opacity-70">{{ product.category.name }}</span>
+                    <h1 class="text-4xl font-black tracking-tight mb-2">{{ product.name }}</h1>
+                    <div class="flex items-center gap-4">
+                        <div class="rating rating-sm">
+                            {% for i in "12345" %}
+                            <input type="radio" class="mask mask-star-2 {% if forloop.counter <= avg_rating %}bg-orange-400{% else %}bg-base-300{% endif %}" disabled />
+                            {% endfor %}
+                        </div>
+                        <span class="text-sm font-medium hover:underline cursor-pointer">{{ review_count }} Verified Reviews</span>
+                    </div>
+                </div>
+
+                <div class="bg-base-200/50 p-6 rounded-2xl">
+                    {% if product.inventory %}
+                    <div class="flex items-baseline gap-2 mb-4">
+                        <span class="text-4xl font-bold">${{ product.inventory.price }}</span>
+                        <span class="text-sm opacity-50 line-through">$ {{ product.inventory.price|add:40 }}</span>
+                    </div>
+
+                    {% if product.inventory.quantity > 0 %}
+                    <div class="flex items-center gap-2 text-success text-sm font-bold mb-6">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-success opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-success"></span>
+                        </span>
+                        In Stock & Ready to Ship
+                    </div>
+                    {% else %}
+                    <div class="badge badge-error badge-outline mb-6">Currently Out of Stock</div>
+                    {% endif %}
+                    {% endif %}
+
+                    <!-- Action Form -->
+                    <form action="{% url 'my_cart_add' %}" method="post" class="space-y-4">
+                        {% csrf_token %}
+                        <input hidden type="text" name="product_id" value="{{ product.id }}">
+                        
+                        <div class="flex gap-4">
+                            <!-- Quantity Selector (DaisyUI Join) -->
+                            <div class="join border-base-300 border">
+                                <button type="button" class="btn btn-ghost join-item btn-sm" onclick="this.nextElementSibling.stepDown()">-</button>
+                                <input type="number" name="quantity" value="1" min="1" max="{{ product.inventory.quantity }}" 
+                                       class="input input-ghost input-sm join-item w-12 text-center focus:outline-none" />
+                                <button type="button" class="btn btn-ghost join-item btn-sm" onclick="this.previousElementSibling.stepUp()">+</button>
+                            </div>
+
+                            <button type="submit" class="btn btn-primary flex-1 shadow-lg shadow-primary/20 {% if product.inventory.quantity == 0 %}btn-disabled{% endif %}">
+                                Add to Cart
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Trust Bar -->
+                <div class="grid grid-cols-3 gap-2 py-4 border-y border-base-200">
+                    <div class="text-center">
+                        <div class="text-xs font-bold uppercase">Free Shipping</div>
+                        <div class="text-[10px] opacity-50">On orders over $50</div>
+                    </div>
+                    <div class="text-center border-x border-base-200">
+                        <div class="text-xs font-bold uppercase">Secure Pay</div>
+                        <div class="text-[10px] opacity-50">100% Protected</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs font-bold uppercase">Returns</div>
+                        <div class="text-[10px] opacity-50">30 Day Window</div>
+                    </div>
+                </div>
+
+                <p class="text-base opacity-70 leading-relaxed">{{ product.description }}</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Section: Tabs for Details & Reviews -->
+    <div class="divider"></div>
+    
+    <div role="tablist" class="tabs tabs-lifted tabs-lg mt-10">
+        <input type="radio" name="product_tabs" role="tab" class="tab" aria-label="Description" checked />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
+            <h3 class="text-xl font-bold mb-4">Product Details</h3>
+            <p class="max-w-3xl opacity-80">{{ product.description }}</p>
+            <ul class="mt-6 space-y-2">
+                <li class="flex gap-4"><span class="font-bold w-24">Category</span> <span>{{ product.category.name }}</span></li>
+                <li class="flex gap-4"><span class="font-bold w-24">SKU</span> <span>{{ product.sku }}</span></li>
+            </ul>
+        </div>
+
+        <input type="radio" name="product_tabs" role="tab" class="tab" aria-label="Reviews ({{ review_count }})" />
+        <div role="tabpanel" class="tab-content bg-base-100 border-base-300 rounded-box p-10">
+            <div class="flex flex-col md:flex-row justify-between items-start gap-10">
+                <!-- Summary -->
+                <div class="w-full md:w-1/3">
+                    <h3 class="text-4xl font-black mb-2">{{ avg_rating }}</h3>
+                    <div class="rating rating-md mb-2">
+                        {% for i in "12345" %}
+                        <input type="radio" class="mask mask-star-2 bg-orange-400" disabled />
+                        {% endfor %}
+                    </div>
+                    <p class="opacity-60 text-sm">Based on {{ review_count }} reviews</p>
+                    <button class="btn btn-outline btn-block mt-6">Write a Review</button>
+                </div>
+
+                <!-- Review List -->
+                <div class="w-full md:w-2/3 space-y-6">
+                    {% for review in reviews %}
+                    <div class="border-b border-base-200 pb-6 last:border-0">
+                        <div class="flex justify-between items-center mb-2">
+                            <span class="font-bold">Customer #{{ review.user_id }}</span>
+                            <span class="text-xs opacity-40">{{ review.created_at|date:"M d, Y" }}</span>
+                        </div>
+                        <div class="rating rating-xs mb-2">
+                            {% for i in "12345" %}
+                            <input type="radio" class="mask mask-star-2 {% if forloop.counter <= review.rating %}bg-orange-400{% else %}bg-base-300{% endif %}" disabled />
+                            {% endfor %}
+                        </div>
+                        <p class="text-sm opacity-80 italic">"{{ review.comment }}"</p>
+                    </div>
+                    {% empty %}
+                    <div class="text-center py-10 opacity-40">No reviews yet.</div>
+                    {% endfor %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    function updateMainImage(src) {
+        // Update main image
+        const mainImg = document.getElementById('main-image');
+        mainImg.style.opacity = '0';
+        setTimeout(() => {
+            mainImg.src = src;
+            mainImg.style.opacity = '1';
+        }, 150);
+
+        // Update thumbnail borders
+        document.querySelectorAll('.thumbnail-btn').forEach(btn => {
+            if (btn.querySelector('img').src === src) {
+                btn.classList.add('border-primary');
+            } else {
+                btn.classList.remove('border-primary');
+            }
+        });
+    }
+</script>
+{% endblock %}

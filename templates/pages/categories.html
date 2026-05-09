@@ -1,0 +1,21 @@
+{% extends "layouts/base.html" %}
+
+{% block body %}
+
+<div class="max-w-7xl mx-auto px-4 pb-16 my-10">
+    {% if categories %}
+    <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-5">
+        {% for category in categories %}
+        <a href="{% url 'shop_page' %}?category={{ category.id }}">
+            {% include "includes/category_card.html" with category=category %}
+        </a>
+        {% endfor %}
+    </div>
+    {% else %}
+    <div class="text-center py-32 opacity-50">
+        <p class="text-xl font-medium">No categories found.</p>
+    </div>
+    {% endif %}
+</div>
+
+{% endblock %}

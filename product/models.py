@@ -1,4 +1,5 @@
 from django.db import models
+from django.urls import reverse
 
 
 class Category(models.Model):
@@ -26,6 +27,9 @@ class Product(models.Model):
     created_by = models.IntegerField()
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
+
+    def get_absolute_url(self):
+        return reverse("shop_detail", kwargs={"pk": self.pk})
 
     def __str__(self):
         return self.name

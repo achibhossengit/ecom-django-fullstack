@@ -1,0 +1,138 @@
+{% extends "layouts/base.html" %}
+
+{% block body %}
+<div class="max-w-7xl mx-auto px-4 pb-16">
+    <form method="get" id="filter-form" class="my-10">
+        <div class="flex flex-wrap gap-3 items-end mb-8">
+
+            <div class="flex-1 min-w-48">
+                <label class="text-xs font-semibold opacity-60 uppercase tracking-wide mb-1 block">Search</label>
+                <input
+                    type="text"
+                    name="search"
+                    value="{{ search }}"
+                    placeholder="Search products..."
+                    class="input input-bordered input-sm w-full"
+                    id="search-input"
+                />
+            </div>
+
+            <div class="min-w-40">
+                <label class="text-xs font-semibold opacity-60 uppercase tracking-wide mb-1 block">Category</label>
+                <select name="category" class="select select-bordered select-sm w-full filter-auto-submit">
+                    <option value="">All Categories</option>
+                    {% for category in categories %}
+                    <option value="{{ category.id }}" {% if category_id == category.id|stringformat:"s" %}selected{% endif %}>
+                        {{ category.name }}
+                    </option>
+                    {% endfor %}
+                </select>
+            </div>
+
+            <div class="min-w-28">
+                <label class="text-xs font-semibold opacity-60 uppercase tracking-wide mb-1 block">Min Price</label>
+                <input
+                    type="number"
+                    name="min_price"
+                    value="{{ min_price }}"
+                    placeholder="0"
+                    class="input input-bordered input-sm w-full"
+                    id="min-price-input"
+                />
+            </div>
+
+            <div class="min-w-28">
+                <label class="text-xs font-semibold opacity-60 uppercase tracking-wide mb-1 block">Max Price</label>
+                <input
+                    type="number"
+                    name="max_price"
+                    value="{{ max_price }}"
+                    placeholder="Any"
+                    class="input input-bordered input-sm w-full"
+                    id="max-price-input"
+                />
+            </div>
+
+            <div class="min-w-40">
+                <label class="text-xs font-semibold opacity-60 uppercase tracking-wide mb-1 block">Sort By</label>
+                <select name="sort" class="select select-bordered select-sm w-full filter-auto-submit">
+                    <option value="">Default</option>
+                    <option value="newest" {% if sort == 'newest' %}selected{% endif %}>Newest</option>
+                    <option value="price_asc" {% if sort == 'price_asc' %}selected{% endif %}>Price: Low to High</option>
+                    <option value="price_desc" {% if sort == 'price_desc' %}selected{% endif %}>Price: High to Low</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2">
+                <button type="submit" class="btn btn-primary btn-sm">Search</button>
+                <a href="{% url 'shop_page' %}" class="btn btn-ghost btn-sm">Reset</a>
+            </div>
+
+        </div>
+    </form>
+
+    {% if products.object_list %}
+        {% include "includes/product_grid.html" %}
+    {% else %}
+    <div class="text-center py-32 opacity-50">
+        <p class="text-xl font-medium">No products found.</p>
+        <a href="{% url 'shop_page' %}" class="btn btn-ghost btn-sm mt-4">Clear filters</a>
+    </div>
+    {% endif %}
+
+    {% if products.paginator.num_pages > 1 %}
+    <div class="flex justify-center mt-12">
+        <div class="join">
+            {% if products.has_previous %}
+            <a href="?page={{ products.previous_page_number }}&search={{ search }}&category={{ category_id }}&min_price={{ min_price }}&max_price={{ max_price }}&sort={{ sort }}"
+               class="join-item btn btn-sm">«</a>
+            {% else %}
+            <button class="join-item btn btn-sm btn-disabled">«</button>
+            {% endif %}
+
+            {% for num in products.paginator.page_range %}
+                {% if products.number == num %}
+                <button class="join-item btn btn-sm btn-active btn-primary">{{ num }}</button>
+                {% elif num >= products.number|add:"-2" and num <= products.number|add:"2" %}
+                <a href="?page={{ num }}&search={{ search }}&category={{ category_id }}&min_price={{ min_price }}&max_price={{ max_price }}&sort={{ sort }}"
+                   class="join-item btn btn-sm">{{ num }}</a>
+                {% endif %}
+            {% endfor %}
+
+            {% if products.has_next %}
+            <a href="?page={{ products.next_page_number }}&search={{ search }}&category={{ category_id }}&min_price={{ min_price }}&max_price={{ max_price }}&sort={{ sort }}"
+               class="join-item btn btn-sm">»</a>
+            {% else %}
+            <button class="join-item btn btn-sm btn-disabled">»</button>
+            {% endif %}
+        </div>
+    </div>
+    {% endif %}
+
+</div>
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+    // auto submit on select change
+    document.querySelectorAll('.filter-auto-submit').forEach(function (el) {
+        el.addEventListener('change', function () {
+            document.getElementById('filter-form').submit();
+        });
+    });
+
+    // debounce search and price inputs
+    let debounceTimer;
+    ['search-input', 'min-price-input', 'max-price-input'].forEach(function (id) {
+        const el = document.getElementById(id);
+        if (el) {
+            el.addEventListener('input', function () {
+                clearTimeout(debounceTimer);
+                debounceTimer = setTimeout(function () {
+                    document.getElementById('filter-form').submit();
+                }, 600);
+            });
+        }
+    });
+</script>
+{% endblock %}
