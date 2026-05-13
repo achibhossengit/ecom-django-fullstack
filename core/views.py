@@ -8,32 +8,18 @@ from product.models import Category, Product
 from .models import Country, City, Area, Zone
 
 def homepage(request):
-    hero_product_qs = Product.objects.select_related(
-        'category', 'inventory'
-    ).prefetch_related('images').filter(inventory__quantity__gt=0).order_by('?').first()
+    categories = Category.objects.prefetch_related('images').order_by("?")[:5]
+    products = Product.objects.order_by("?").select_related('category', 'inventory').prefetch_related('images')[:8]
+    for p in products:
+        p.image = p.images.all()[0] if p.images.all() else None
 
-    if hero_product_qs:
-        default_image = hero_product_qs.images.first()
-        hero_product = {
-            'name': hero_product_qs.name,
-            'category': {'name': hero_product_qs.category.name if hero_product_qs.category else ''},
-            'price': hero_product_qs.inventory.price,
-            'original_price': None,
-            'discount_percent': None,
-            'tag': 'new',
-            'image': default_image.image.url if default_image else None,
-            'url': hero_product_qs.get_absolute_url(),
-        }
-    else:
-        hero_product = None
-
-    categories = Category.objects.all()[:5]
-    products = Product.objects.all().order_by("created_at").select_related('inventory').prefetch_related('images')[:12]
-
+    for c in categories:
+        c.image = c.images.all()[0] if c.images.all() else None
+        
     context = {
         'categories': categories,
         'products': products,
-        'hero_product': hero_product,
+        'hero_product': products[0],
     }
     return render(request, 'pages/home.html', context=context)
 

@@ -6,19 +6,17 @@
   <a href="{{ product.get_absolute_url|default:'#' }}">
     <!-- Image -->
     <figure class="relative aspect-square">
-      {% with default_image=product.images.first %}
-        {% if default_image %}
-          <img src="{{ default_image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
+        {% if product.image %}
+        <img src="{{ product.image.image.url }}" alt="{{ product.name }}" class="w-full h-full object-cover" />
         {% else %}
-          <div class="w-full h-full flex items-center justify-center bg-base-300">
-            <svg class="w-10 h-10 opacity-30 text-base-content" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
-              <rect x="3" y="3" width="18" height="18" rx="2" />
-              <circle cx="8.5" cy="8.5" r="1.5" />
-              <polyline points="21 15 16 10 5 21" />
-            </svg>
-          </div>
+        <div class="w-full h-full flex items-center justify-center bg-base-300">
+          <svg class="w-10 h-10 opacity-30 text-base-content" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+            <rect x="3" y="3" width="18" height="18" rx="2" />
+            <circle cx="8.5" cy="8.5" r="1.5" />
+            <polyline points="21 15 16 10 5 21" />
+          </svg>
+        </div>
         {% endif %}
-      {% endwith %}
 
       {% if product.tag %}
         <p class="absolute top-3 left-3 px-2 py-0.5 rounded-full text-xs font-semibold bg-primary text-white">
