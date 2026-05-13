@@ -1,10 +1,78 @@
+from django.core.cache import cache
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.views import View
 from django.views.generic import TemplateView
 from product.models import Product
 from .models import Cart, CartItem
-from users.models import UserAddress
+from .utils import get_cart_cache_key, invalidate_cart_cache
+
+CART_CACHE_TIMEOUT = 60 * 5
+
+class CartView(TemplateView):
+    template_name = "pages/my_dashboard/my_cart.html"
+
+    def get_context_data(self, **kwargs):
+        request = self.request
+
+        cache_key = get_cart_cache_key(request)
+        cached_context = cache.get(cache_key)
+        if cached_context:
+            return cached_context
+
+        # =======================
+        # Logged-in user → DB cart
+        # =======================
+        if request.user.is_authenticated:
+            active_address = request.user.addresses.filter(is_active=True).last()
+            cart, _ = Cart.objects.get_or_create(user_id=request.user.id)
+            cart_items = CartItem.objects.filter(cart=cart).select_related(
+                'product', 'product__inventory'
+            ).prefetch_related('product__images')
+
+            total_price = sum(item.total_price for item in cart_items if item.selected)
+
+        # ========================
+        # Guest user → session cart
+        # ========================
+        else:
+            active_address = None
+            cart = None
+            cart_data = request.session.get('cart', [])
+            cart_items = []
+            total_price = 0
+            for item in cart_data:
+                try:
+                    product = Product.objects.get(id=item["product_id"])
+                    total = product.inventory.price * item["quantity"]
+                    cart_items.append({
+                        "product": product,
+                        "quantity": item["quantity"],
+                        "selected": item["selected"],
+                        "total_price": total,
+                    })
+                    if item["selected"]:
+                        total_price += total
+                except Product.DoesNotExist:
+                    continue
+
+        shipping_charge = 60
+        grand_total = total_price + shipping_charge
+
+        context = {
+            "cart": cart,
+            "cart_items": cart_items,
+            "total_price": total_price,
+            "shipping_charge": shipping_charge,
+            "grand_total": grand_total,
+            "active_address": active_address,
+        }
+        
+        # ====set cache====
+        cache.set(cache_key, context, timeout=CART_CACHE_TIMEOUT)
+        return context
+
+
 
 
 class AddToCartView(View):
@@ -54,68 +122,14 @@ class AddToCartView(View):
                 })
             request.session["cart"] = cart
             request.session.modified = True
-
+            
+        invalidate_cart_cache(request)
         return redirect("my_cart")
 
 
-class CartView(TemplateView):
-    template_name = "pages/my_dashboard/my_cart.html"
-
-    def get_context_data(self, **kwargs):
-        request = self.request
-
-        # =======================
-        # Logged-in user → DB cart
-        # =======================
-        if request.user.is_authenticated:
-            active_address = request.user.addresses.filter(is_active=True).last()
-            cart, _ = Cart.objects.get_or_create(user_id=request.user.id)
-            cart_items = CartItem.objects.filter(cart=cart).select_related(
-                'product', 'product__inventory'
-            ).prefetch_related('product__images')
-
-            total_price = sum(item.total_price for item in cart_items if item.selected)
-
-        # ========================
-        # Guest user → session cart
-        # ========================
-        else:
-            active_address = None
-            cart = None
-            cart_data = request.session.get('cart', [])
-            cart_items = []
-            total_price = 0
-            for item in cart_data:
-                try:
-                    product = Product.objects.get(id=item["product_id"])
-                    total = product.inventory.price * item["quantity"]
-                    cart_items.append({
-                        "product": product,
-                        "quantity": item["quantity"],
-                        "selected": item["selected"],
-                        "total_price": total,
-                    })
-                    if item["selected"]:
-                        total_price += total
-                except Product.DoesNotExist:
-                    continue
-
-        shipping_charge = 60
-        grand_total = total_price + shipping_charge
-
-        context = {
-            "cart": cart,
-            "cart_items": cart_items,
-            "total_price": total_price,
-            "shipping_charge": shipping_charge,
-            "grand_total": grand_total,
-            "active_address": active_address,
-        }
-        return context
-
 class CartUpdateView(View):
     def post(self, request, *args, **kwargs):
-        valid_action_types = ['toggle_selected', 'quantity_inc', 'quantity_dec', 'remove']
+        valid_action_types = ['toggle_selected', 'quantity_inc', 'quantity_dec']
         item_product_id = request.POST.get('item_product_id')
         action_type = request.POST.get('action_type')
 
@@ -123,9 +137,6 @@ class CartUpdateView(View):
             messages.error(request, "Choose a valid action type!")
             return redirect('my_cart')
 
-        # =========================
-        # Logged-in user → DB cart
-        # =========================
         if request.user.is_authenticated:
             cart = get_object_or_404(Cart, user_id=request.user.id)
             cart_item = get_object_or_404(CartItem, product_id=item_product_id, cart=cart)
@@ -139,15 +150,9 @@ class CartUpdateView(View):
                     cart_item.quantity -= 1
                 else:
                     messages.warning(request, "Quantity cannot go below 1.")
-            elif action_type == "remove":
-                cart_item.delete()
-                return redirect('my_cart')
 
             cart_item.save()
 
-        # =========================
-        # Guest user → session cart
-        # =========================
         else:
             cart_data = request.session.get("cart", [])
             for item in cart_data:
@@ -161,10 +166,28 @@ class CartUpdateView(View):
                             item["quantity"] -= 1
                         else:
                             messages.warning(request, "Quantity cannot go below 1.")
-                    elif action_type == "remove":
-                        cart_data.remove(item)
                     break
             request.session["cart"] = cart_data
             request.session.modified = True
 
+        invalidate_cart_cache(request)
+        return redirect('my_cart')
+
+
+class CartRemoveView(View):
+    def post(self, request, *args, **kwargs):
+        item_product_id = request.POST.get('item_product_id')
+
+        if request.user.is_authenticated:
+            cart = get_object_or_404(Cart, user_id=request.user.id)
+            cart_item = get_object_or_404(CartItem, product_id=item_product_id, cart=cart)
+            cart_item.delete()
+
+        else:
+            cart_data = request.session.get("cart", [])
+            cart_data = [item for item in cart_data if str(item["product_id"]) != str(item_product_id)]
+            request.session["cart"] = cart_data
+            request.session.modified = True
+
+        invalidate_cart_cache(request)
         return redirect('my_cart')

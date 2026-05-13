@@ -4,7 +4,6 @@ from .models import Cart, CartItem
 
 @receiver(user_logged_in)
 def sync_cart(sender, user, request, **kwargs):
-    print("=====called the loged in signals======")
     cart_data = request.session.get('cart', [])
     if cart_data:
         cart, _ = Cart.objects.get_or_create(user_id=user.id)
