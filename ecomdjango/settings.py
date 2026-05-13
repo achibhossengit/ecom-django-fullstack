@@ -198,3 +198,16 @@ INTERNAL_IPS = [
 FIXTURE_DIRS = [
     BASE_DIR / "fixtures",
 ]
+
+
+CACHES = {
+    "default": {
+        "BACKEND": "django_redis.cache.RedisCache",
+        "LOCATION": config("REDIS_CACHE_LOCATION"),
+        "KEY_PREFIX": "ecomdjango", 
+        "OPTIONS": {
+            "CLIENT_CLASS": "django_redis.client.DefaultClient",
+        },
+        "VERSION": config("REDIS_CACHE_VERSION"),
+    }
+}
