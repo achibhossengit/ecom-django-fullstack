@@ -1,5 +1,7 @@
 from django.views import View
 from django.views.decorators.cache import cache_page
+from django.views.decorators.http import last_modified
+from django.utils.decorators import method_decorator
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -26,7 +28,13 @@ def homepage(request):
     return render(request, 'pages/home.html', context=context)
 
 
+def last_modified_products(request, *args, **kwargs):
+    latest_product = Product.objects.order_by("-updated_at").first()
+    if latest_product:
+        return latest_product.updated_at
+    return None
 
+@method_decorator(last_modified(last_modified_products), name="dispatch")
 class ShopView(View):
     def get(self, request):
         products = Product.objects.select_related(
@@ -54,6 +62,9 @@ class ShopView(View):
             products = products.order_by('-inventory__price')
         elif sort == 'newest':
             products = products.order_by('-created_at')
+            
+        for p in products:
+            p.image = p.images.all()[0] if p.images.all() else None
 
         paginator = Paginator(products, 12)
         page = request.GET.get('page', 1)
