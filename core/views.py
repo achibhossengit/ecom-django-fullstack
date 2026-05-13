@@ -1,4 +1,5 @@
 from django.views import View
+from django.views.decorators.cache import cache_page
 from django.db import models
 from django.shortcuts import get_object_or_404
 from django.http import JsonResponse
@@ -7,6 +8,7 @@ from django.shortcuts import render
 from product.models import Category, Product
 from .models import Country, City, Area, Zone
 
+@cache_page(60*15, key_prefix="core_cache")
 def homepage(request):
     categories = Category.objects.prefetch_related('images').order_by("?")[:5]
     products = Product.objects.order_by("?").select_related('category', 'inventory').prefetch_related('images')[:8]
