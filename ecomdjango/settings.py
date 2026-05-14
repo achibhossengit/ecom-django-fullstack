@@ -211,3 +211,5 @@ CACHES = {
         "VERSION": config("REDIS_CACHE_VERSION"),
     }
 }
+
+CELERY_BROKER_URL = config("CELERY_BROKER_URL")

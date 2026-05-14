@@ -7,6 +7,8 @@ from product.models import Product
 from .models import Cart, CartItem
 from .utils import get_cart_cache_key, invalidate_cart_cache
 
+from .tasks import send_email_task
+
 CART_CACHE_TIMEOUT = 60 * 5
 
 class CartView(TemplateView):
@@ -14,6 +16,8 @@ class CartView(TemplateView):
 
     def get_context_data(self, **kwargs):
         request = self.request
+        
+        send_email_task.delay("achib@khalid.com")
 
         cache_key = get_cart_cache_key(request)
         cached_context = cache.get(cache_key)
