@@ -10,7 +10,8 @@ services:
     env_file:
       - .env
     volumes:
-      - ./:/app
+      # - ./:/app
+      - ecom-static-data:/app/staticfiles
     networks:
       - ecom-network
     depends_on:
@@ -62,3 +63,4 @@ networks:
 volumes:
   ecom-post-data:
   ecom-redis-data:
+  ecom-static-data:
