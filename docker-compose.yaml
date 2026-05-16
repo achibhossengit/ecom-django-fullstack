@@ -20,8 +20,10 @@ services:
   ecom-postgres:
     image: postgres:17
     container_name: ecom-postgres
-    env_file:
-      - .env
+    environment:
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: ecom-db
     ports:
       - '5432:5432'
     networks:
