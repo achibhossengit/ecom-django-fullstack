@@ -1,0 +1,62 @@
+version: '3.8'
+
+services:
+  ecom-app:
+    build:
+      context: ./
+      dockerfile: Dockerfile
+    ports:
+      - '8000:8000'
+    env_file:
+      - .env
+    volumes:
+      - ./:/app
+    networks:
+      - ecom-network
+    depends_on:
+      - ecom-postgres
+      - ecom-redis
+
+  ecom-postgres:
+    image: postgres:17
+    container_name: ecom-postgres
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    networks:
+      - ecom-network
+    volumes:
+      - ecom-post-data:/var/lib/postgresql/data
+
+  ecom-redis:
+    image: redis/redis-stack:latest
+    ports:
+      - '6379:6379'
+      - '8001:8001'
+    volumes:
+      - ecom-redis-data:/var/lib/redis-stack
+    environment:
+      - REDIS_ARGS=--SAVE 900 1
+    networks:
+      - ecom-network
+
+  ecom-pgadmin:
+    image: dpage/pgadmin4
+    environment:
+      PGADMIN_DEFAULT_EMAIL: admin@example.com
+      PGADMIN_DEFAULT_PASSWORD: password
+    ports:
+      - '5050:80'
+    depends_on:
+      - ecom-postgres
+    networks:
+      - ecom-network
+
+networks:
+  ecom-network:
+    driver: bridge
+
+volumes:
+  ecom-post-data:
+  ecom-redis-data:
