@@ -105,6 +105,8 @@ class CategoryListView(View):
         categories = Category.objects.prefetch_related('images').all()
         for c in categories:
             c.image = c.images.all()[0] if c.images.all() else None
+            
+        print("============all about test changes")
         return render(request, 'pages/categories.html', {'categories': categories})
 
 
