@@ -103,6 +103,8 @@ class ShopDetailView(View):
 class CategoryListView(View):
     def get(self, request):
         categories = Category.objects.prefetch_related('images').all()
+        for c in categories:
+            c.image = c.images.all()[0] if c.images.all() else None
         return render(request, 'pages/categories.html', {'categories': categories})
 
 
