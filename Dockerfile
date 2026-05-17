@@ -19,9 +19,6 @@ RUN pip install --upgrade pip \
 # Copy project files
 COPY . ./
 
-# Collect static files (optional for production)
-RUN python manage.py collectstatic --noinput || true
-
 EXPOSE 8000
 
 # Run with Gunicorn

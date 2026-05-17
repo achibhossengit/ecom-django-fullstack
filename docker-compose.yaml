@@ -3,13 +3,11 @@ services:
     build:
       context: ./
       dockerfile: Dockerfile
+    image: ahossen/ecom-app:1.0.0
     ports:
       - '8000:8000'
     env_file:
       - .env
-    environment:
-      - DATABASE_URL=postgres://admin:password@ecom-postgres:5432/ecom-db
-      - REDIS_CACHE_LOCATION=redis://default:password@ecom-redis:6379/1
     volumes:
       # - ./:/app
       - ecom-static-data:/app/staticfiles
