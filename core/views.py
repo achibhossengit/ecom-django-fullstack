@@ -23,7 +23,7 @@ def homepage(request):
     context = {
         'categories': categories,
         'products': products,
-        'hero_product': products[0],
+        'hero_product': products[0] if products else None,
     }
     return render(request, 'pages/home.html', context=context)
 

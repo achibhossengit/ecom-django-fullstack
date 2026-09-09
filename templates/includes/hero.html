@@ -57,8 +57,18 @@
 
     <!-- Right: Visual -->
     <div class="relative animate-fade-in delay-300">
-      <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-sm">
-        <img src="{{ hero_product.image.image.url }}" alt="{{ hero_product.name }}" class="w-full h-full object-cover" />
+      <div class="relative rounded-3xl overflow-hidden shadow-2xl max-w-sm aspect-[3/4] bg-base-300">
+        {% if hero_product and hero_product.image %}
+          <img src="{{ hero_product.image.image.url }}" alt="{{ hero_product.name }}" class="w-full h-full object-cover" />
+        {% else %}
+          <div class="w-full h-full min-h-[28rem] flex items-center justify-center">
+            <svg class="w-16 h-16 opacity-30 text-base-content" fill="none" stroke="currentColor" stroke-width="1" viewBox="0 0 24 24">
+              <rect x="3" y="3" width="18" height="18" rx="2" />
+              <circle cx="8.5" cy="8.5" r="1.5" />
+              <polyline points="21 15 16 10 5 21" />
+            </svg>
+          </div>
+        {% endif %}
       </div>
     </div>
   </div>
