@@ -19,8 +19,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    # 'cloudinary_storage',
-    # 'cloudinary',
+    'cloudinary_storage',
+    'cloudinary',
     'django.contrib.humanize',
     'debug_toolbar',
 
@@ -118,20 +118,31 @@ STATIC_ROOT = str(BASE_DIR / 'staticfiles')
 STATICFILES_DIRS = [str(BASE_DIR / "static")]
 MEDIA_URL = '/dcom/'
 MEDIA_ROOT = str(BASE_DIR / 'mediafiles')
-STORAGES = {
-    "default": {
-        # "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
-        "BACKEND": "django.core.files.storage.FileSystemStorage",
-    },
-    "staticfiles": {
-        "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
-    },
-}
-# CLOUDINARY_STORAGE = {
-#     "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
-#     "API_KEY": config("CLOUDINARY_API_KEY"),
-#     "API_SECRET": config("CLOUDINARY_API_SECRET"),
-# }
+
+# Local: filesystem media. Production: Cloudinary (set CLOUDINARY_* env vars)
+if DEBUG:
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+else:
+    STORAGES = {
+        "default": {
+            "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "whitenoise.storage.CompressedManifestStaticFilesStorage",
+        },
+    }
+    CLOUDINARY_STORAGE = {
+        "CLOUD_NAME": config("CLOUDINARY_CLOUD_NAME"),
+        "API_KEY": config("CLOUDINARY_API_KEY"),
+        "API_SECRET": config("CLOUDINARY_API_SECRET"),
+    }
 
 
 # anymail config
