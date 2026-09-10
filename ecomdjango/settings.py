@@ -216,14 +216,25 @@ FIXTURE_DIRS = [
 # Keep BASE_DIR as str for Vercel settings JSON discovery (must be after Path joins above)
 BASE_DIR = str(BASE_DIR)
 
-CACHES = {
-    "default": {
-        "BACKEND": "django_redis.cache.RedisCache",
-        "LOCATION": config("REDIS_CACHE_LOCATION"),
-        "KEY_PREFIX": "ecomdjango", 
-        "OPTIONS": {
-            "CLIENT_CLASS": "django_redis.client.DefaultClient",
-        },
-        "VERSION": config("REDIS_CACHE_VERSION"),
+# Local: in-process memory. Production: Redis (REDIS_CACHE_LOCATION)
+if DEBUG:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "ecomdjango",
+            "KEY_PREFIX": "ecomdjango",
+            "VERSION": config("REDIS_CACHE_VERSION", default=1, cast=int),
+        }
     }
-}
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": config("REDIS_CACHE_LOCATION"),
+            "KEY_PREFIX": "ecomdjango",
+            "OPTIONS": {
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+            "VERSION": config("REDIS_CACHE_VERSION", default=1, cast=int),
+        }
+    }
