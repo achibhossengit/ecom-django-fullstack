@@ -59,7 +59,7 @@ Created by seed commands (`create_groups`, `assign_grouppermissions`), not JSON 
 | Auth         | django-allauth (email + Google)                                      |
 | Frontend     | Tailwind CSS 4 + DaisyUI 5                                           |
 | Database     | PostgreSQL (`DATABASE_URL`)                                          |
-| Cache        | LocMem when `DEBUG=True`; Redis when `DEBUG=False`                   |
+| Cache        | LocMem when `DEBUG=True`; Redis when `DEBUG=False`. Homepage catalog only — not sessions, cart, or rate limiting |
 | Static files | WhiteNoise                                                           |
 | Media        | Local `mediafiles/` when `DEBUG=True`; Cloudinary when `DEBUG=False` |
 | Email        | Console backend in debug; Anymail / Resend in production             |
@@ -77,6 +77,8 @@ Created by seed commands (`create_groups`, `assign_grouppermissions`), not JSON 
 ### `core`
 
 Public pages — homepage, shop listing, product detail, category listing, about — plus country/city/area/zone address helpers.
+
+The homepage caches category and product query results for 15 minutes (`homepage_catalog`). The HTML is always rendered fresh so login toasts and the auth navbar are not frozen. That catalog cache is dropped when a `Product`, `Category`, `Inventory`, `ProductImage`, or `CategoryImage` is saved or deleted.
 
 ### `users`
 
@@ -102,6 +104,7 @@ Models: `Cart`, `CartItem`
 - Authenticated users: cart stored in database
 - Guest users: cart stored in Django session as a list of dicts `[{product_id, quantity, selected}]`
 - On login, session cart is merged into the database cart via a `user_logged_in` signal
+- Cart page is not cached — items and the active shipping address are read live on each request
 - Context processor provides `cart_item_count` and `cart_subtotal` to all templates
 
 
@@ -167,6 +170,8 @@ Models: `RiderProfile`, `RiderApplication`, `RiderAddress`
 
 **Context processor for cart** — cart count and subtotal are injected into every template without repeating the query in every view.
 
+**Homepage catalog cache** — only the homepage product/category lists are cached (15 minutes). Cart, sessions, and authentication do not use the cache. Redis is the production backend for that catalog cache; there is no rate limiter.
+
 **Event log pattern for order tracking** — `OrderEvent` is append-only. Every status change adds a row, giving a full timestamped audit trail displayed on the tracking UI.
 
 **Atomic transactions** — order placement, cancellation, and inventory updates are wrapped in `transaction.atomic()` so partial failures never leave the database in an inconsistent state.
@@ -225,7 +230,7 @@ ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 # Local Compose Postgres (use your hosted URL instead if not using Docker)
 DATABASE_URL=postgres://admin:password@localhost:5432/ecom-db
 
-# Used only when DEBUG=False
+# Used only when DEBUG=False (homepage catalog cache backend — not sessions or rate limiting)
 REDIS_CACHE_LOCATION=redis://localhost:6379/1
 REDIS_CACHE_VERSION=1
 
@@ -243,7 +248,7 @@ CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
-With `DEBUG=True`, Django uses in-process LocMem cache, local media files, and the console email backend. Redis, Cloudinary, and the Resend API key are required in production (`DEBUG=False`).
+With `DEBUG=True`, Django uses in-process LocMem cache, local media files, and the console email backend. Redis, Cloudinary, and the Resend API key are required in production (`DEBUG=False`). Redis is only the Django cache backend for the homepage catalog; login still uses database sessions.
 
 ### 4. Migrate
 
@@ -318,7 +323,7 @@ python manage.py load_order
 
 Seeded demo users use password `Test1234!` (usernames like `customer_jane_0`, `manager_…`, `rider_…`).
 
-The homepage is cached for 15 minutes. After seeding, flush cache if it still looks empty:
+The homepage catalog is cached for 15 minutes and is cleared when products or categories change. After seeding, flush cache if the homepage still looks empty:
 
 ```bash
 python manage.py shell -c "from django.core.cache import cache; cache.clear()"
