@@ -1,7 +1,6 @@
 from pathlib import Path
 from decouple import config, Csv
 from dj_database_url import parse as db_url
-from django.urls import reverse_lazy
 
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -114,10 +113,11 @@ USE_TZ = True
 # Staticfiles & mediafiles Config
 # ==============
 STATIC_URL = '/static/'
-STATIC_ROOT = BASE_DIR/'staticfiles'
-STATICFILES_DIRS = [BASE_DIR/"static"]
+# str paths: Vercel json.dumps settings at build time; Path is not serializable
+STATIC_ROOT = str(BASE_DIR / 'staticfiles')
+STATICFILES_DIRS = [str(BASE_DIR / "static")]
 MEDIA_URL = '/dcom/'
-MEDIA_ROOT = BASE_DIR/'mediafiles'
+MEDIA_ROOT = str(BASE_DIR / 'mediafiles')
 STORAGES = {
     "default": {
         # "BACKEND": "cloudinary_storage.storage.MediaCloudinaryStorage",
@@ -150,12 +150,14 @@ DEFAULT_FROM_EMAIL = config("DEFAULT_FROM_EMAIL")
 ACCOUNT_SIGNUP_FIELDS = [ "email*", "password1*", "password2*" ]
 ACCOUNT_SIGNUP_FORM_CLASS = "users.forms.UserSignUpForm"
 ACCOUNT_SESSION_REMEMBER = True
-ACCOUNT_LOGIN_METHODS = {"email"}
+# list not set — set is not JSON-serializable (Vercel build discovery)
+ACCOUNT_LOGIN_METHODS = ["email"]
 ACCOUNT_LOGIN_BY_CODE_ENABLED = True
 ACCOUNT_LOGIN_BY_CODE_SUPPORTS_RESEND  = True
 ACCOUNT_LOGOUT_ON_GET = True
-LOGIN_REDIRECT_URL = reverse_lazy("my_profile")
-ACCOUNT_SIGNUP_REDIRECT_URL = reverse_lazy("homepage")
+# Plain strings (not reverse_lazy) so Vercel can JSON-serialize settings at build time
+LOGIN_REDIRECT_URL = "/my-dashboard/profile/"
+ACCOUNT_SIGNUP_REDIRECT_URL = "/"
 
 ACCOUNT_EMAIL_VERIFICATION = "mandatory"
 ACCOUNT_EMAIL_VERIFICATION_BY_CODE_ENABLED = True
@@ -197,9 +199,11 @@ INTERNAL_IPS = [
 ]
 
 FIXTURE_DIRS = [
-    BASE_DIR / "fixtures",
+    str(BASE_DIR / "fixtures"),
 ]
 
+# Keep BASE_DIR as str for Vercel settings JSON discovery (must be after Path joins above)
+BASE_DIR = str(BASE_DIR)
 
 CACHES = {
     "default": {
