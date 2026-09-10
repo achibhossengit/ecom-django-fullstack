@@ -1,5 +1,5 @@
+from django.core.cache import cache
 from django.views import View
-from django.views.decorators.cache import cache_page
 from django.views.decorators.http import last_modified
 from django.utils.decorators import method_decorator
 from django.db import models
@@ -10,22 +10,37 @@ from django.shortcuts import render
 from product.models import Category, Product
 from .models import Country, City, Area, Zone
 
-@cache_page(60*15, key_prefix="core_cache")
-def homepage(request):
-    categories = Category.objects.prefetch_related('images').order_by("?")[:5]
-    products = Product.objects.order_by("?").select_related('category', 'inventory').prefetch_related('images')[:8]
+HOMEPAGE_CATALOG_KEY = "homepage_catalog"
+HOMEPAGE_CATALOG_TIMEOUT = 60 * 15
+
+
+def _homepage_catalog():
+    cached = cache.get(HOMEPAGE_CATALOG_KEY)
+    if cached is not None:
+        return cached
+
+    categories = list(Category.objects.prefetch_related("images").order_by("?")[:5])
+    products = list(
+        Product.objects.order_by("?")
+        .select_related("category", "inventory")
+        .prefetch_related("images")[:8]
+    )
     for p in products:
         p.image = p.images.all()[0] if p.images.all() else None
-
     for c in categories:
         c.image = c.images.all()[0] if c.images.all() else None
-        
+
     context = {
-        'categories': categories,
-        'products': products,
-        'hero_product': products[0] if products else None,
+        "categories": categories,
+        "products": products,
+        "hero_product": products[0] if products else None,
     }
-    return render(request, 'pages/home.html', context=context)
+    cache.set(HOMEPAGE_CATALOG_KEY, context, HOMEPAGE_CATALOG_TIMEOUT)
+    return context
+
+
+def homepage(request):
+    return render(request, "pages/home.html", _homepage_catalog())
 
 
 def last_modified_products(request, *args, **kwargs):

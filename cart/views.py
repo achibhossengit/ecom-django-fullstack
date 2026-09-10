@@ -1,30 +1,25 @@
-from django.core.cache import cache
 from django.shortcuts import redirect, get_object_or_404
 from django.contrib import messages
 from django.views import View
 from django.views.generic import TemplateView
 from product.models import Product
 from .models import Cart, CartItem
-from .utils import get_cart_cache_key, invalidate_cart_cache
-
-CART_CACHE_TIMEOUT = 60 * 5
 
 class CartView(TemplateView):
     template_name = "pages/my_dashboard/my_cart.html"
 
     def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
         request = self.request
-
-        cache_key = get_cart_cache_key(request)
-        cached_context = cache.get(cache_key)
-        if cached_context:
-            return cached_context
 
         # =======================
         # Logged-in user → DB cart
         # =======================
         if request.user.is_authenticated:
-            active_address = request.user.addresses.filter(is_active=True).last()
+            active_address = (
+                request.user.addresses.filter(is_active=True).last()
+                or request.user.addresses.last()
+            )
             cart, _ = Cart.objects.get_or_create(user_id=request.user.id)
             cart_items = CartItem.objects.filter(cart=cart).select_related(
                 'product', 'product__inventory'
@@ -59,17 +54,14 @@ class CartView(TemplateView):
         shipping_charge = 60
         grand_total = total_price + shipping_charge
 
-        context = {
+        context.update({
             "cart": cart,
             "cart_items": cart_items,
             "total_price": total_price,
             "shipping_charge": shipping_charge,
             "grand_total": grand_total,
             "active_address": active_address,
-        }
-        
-        # ====set cache====
-        cache.set(cache_key, context, timeout=CART_CACHE_TIMEOUT)
+        })
         return context
 
 
@@ -122,8 +114,7 @@ class AddToCartView(View):
                 })
             request.session["cart"] = cart
             request.session.modified = True
-            
-        invalidate_cart_cache(request)
+
         return redirect("my_cart")
 
 
@@ -170,7 +161,6 @@ class CartUpdateView(View):
             request.session["cart"] = cart_data
             request.session.modified = True
 
-        invalidate_cart_cache(request)
         return redirect('my_cart')
 
 
@@ -189,5 +179,4 @@ class CartRemoveView(View):
             request.session["cart"] = cart_data
             request.session.modified = True
 
-        invalidate_cart_cache(request)
         return redirect('my_cart')
