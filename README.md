@@ -60,7 +60,7 @@ Created by seed commands (`create_groups`, `assign_grouppermissions`), not JSON 
 | Frontend     | Tailwind CSS 4 + DaisyUI 5                                           |
 | Database     | PostgreSQL (`DATABASE_URL`)                                          |
 | Cache        | LocMem when `DEBUG=True`; Redis when `DEBUG=False`. Homepage catalog only — not sessions, cart, or rate limiting |
-| Static files | WhiteNoise                                                           |
+| Static files | WhiteNoise. Source in `assets/` (including compiled `css/output.css`); `collectstatic` writes gitignored `staticfiles/` |
 | Media        | Local `mediafiles/` when `DEBUG=True`; Cloudinary when `DEBUG=False` |
 | Email        | Console backend in debug; Anymail / Resend in production             |
 | Payment      | Not integrated. `Payment.Method` lists COD, bKash, Nagad, and SSLCommerz, but checkout does not call any gateway. Seed data uses COD only; new orders stay unpaid. |
@@ -193,12 +193,21 @@ source .venv/bin/activate          # Windows: .venv\Scripts\activate
 pip install -r requirements.txt
 ```
 
-Optional (Tailwind watch):
+Optional (rebuild Tailwind CSS after template or `assets/input.css` changes):
 
 ```bash
 npm install
-npm run watch:css
+npm run watch:css          # development
+# npm run build:css        # one-off build → assets/css/output.css
 ```
+
+Commit `assets/css/output.css` so clones work without Node. Then collect into gitignored `staticfiles/` (WhiteNoise):
+
+```bash
+python manage.py collectstatic
+```
+
+Do not commit `static/` or `staticfiles/`. JS, images, and compiled CSS live in `assets/`. `collectstatic` copies them to `staticfiles/`.
 
 
 

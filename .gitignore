@@ -6,3 +6,5 @@ node_modules
 .vscode
 /automation_scripts
 /mediafiles
+/static
+/staticfiles

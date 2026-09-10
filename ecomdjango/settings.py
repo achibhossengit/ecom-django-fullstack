@@ -115,7 +115,12 @@ USE_TZ = True
 STATIC_URL = '/static/'
 # str paths: Vercel json.dumps settings at build time; Path is not serializable
 STATIC_ROOT = str(BASE_DIR / 'staticfiles')
-STATICFILES_DIRS = [str(BASE_DIR / "static")]
+# Source files live in assets/; collectstatic copies them to staticfiles/
+STATICFILES_DIRS = [
+    ("css", str(BASE_DIR / "assets" / "css")),
+    ("js", str(BASE_DIR / "assets" / "js")),
+    ("images", str(BASE_DIR / "assets" / "images")),
+]
 MEDIA_URL = '/dcom/'
 MEDIA_ROOT = str(BASE_DIR / 'mediafiles')
 
