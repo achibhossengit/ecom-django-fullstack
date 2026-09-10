@@ -7,16 +7,19 @@ A full-stack e-commerce web application built with Django, DaisyUI, and Tailwind
 ## Features
 
 ### Customer
+
 - Browse products with search, category, and price filters
 - Product detail page with reviews and ratings
 - Cart management (authenticated + guest session cart, merged on login)
-- Place orders with delivery address selection
+- Place orders with delivery address selection (payment gateways are not wired; orders remain unpaid)
 - Order history with detail view
 - Order tracking (real-time status events)
 - Cancel unpaid orders
-- Pay for pending orders (bKash, Nagad, SSLCommerz, COD)
+
+
 
 ### Manager
+
 - Manage products and categories (add, edit, images)
 - View and filter all orders by status and payment
 - Assign riders to orders with zone/area/city/country matching algorithm
@@ -24,7 +27,10 @@ A full-stack e-commerce web application built with Django, DaisyUI, and Tailwind
 - Review rider applications (approve/reject)
 - Manage rider profiles
 
+
+
 ### Rider
+
 - Apply to become a rider
 - View assigned orders
 - Update order status sequentially: Assigned → Picked Up → On the Way → Delivered
@@ -32,35 +38,65 @@ A full-stack e-commerce web application built with Django, DaisyUI, and Tailwind
 
 ---
 
-## Tech Stack
+## Groups and permissions
 
-| Layer | Technology |
-|---|---|
-| Backend | Django 6.x |
-| Auth | django-allauth |
-| Frontend | Tailwind CSS + DaisyUI |
-| Database | PostgreSQL 17 (Docker) |
-| Cache | Redis Stack (Docker) |
-| File Storage | Django media files |
-| Payment | bKash, Nagad, SSLCommerz, COD |
+Created by seed commands (`create_groups`, `assign_grouppermissions`), not JSON fixtures. New signups are added to `customer` automatically.
+
+| Group | Permissions (short) |
+| --- | --- |
+| `customer` | Cart; place / view / cancel orders; view catalog; reviews; apply to be a rider |
+| `manager` | Manager dashboard; product & category CRUD; view / assign / cancel orders; review rider applications and profiles |
+| `rider` | Rider dashboard; view assigned orders; add order events (status updates); manage own profile and addresses |
 
 ---
 
+## Tech Stack
+
+
+| Layer        | Technology                                                           |
+| ------------ | -------------------------------------------------------------------- |
+| Backend      | Django 6.x                                                           |
+| Auth         | django-allauth (email + Google)                                      |
+| Frontend     | Tailwind CSS 4 + DaisyUI 5                                           |
+| Database     | PostgreSQL (`DATABASE_URL`)                                          |
+| Cache        | LocMem when `DEBUG=True`; Redis when `DEBUG=False`                   |
+| Static files | WhiteNoise                                                           |
+| Media        | Local `mediafiles/` when `DEBUG=True`; Cloudinary when `DEBUG=False` |
+| Email        | Console backend in debug; Anymail / Resend in production             |
+| Payment      | Not integrated. `Payment.Method` lists COD, bKash, Nagad, and SSLCommerz, but checkout does not call any gateway. Seed data uses COD only; new orders stay unpaid. |
+
+
+---
+
+
+
 ## Apps Overview
 
+
+
 ### `core`
-Handles public-facing pages — homepage, shop listing, product detail, category listing, about page.
+
+Public pages — homepage, shop listing, product detail, category listing, about — plus country/city/area/zone address helpers.
+
+### `users`
+
+Profile and saved addresses. Login, signup, and email verification are handled by django-allauth.
 
 ### `product`
+
 Models: `Category`, `Product`, `ProductImage`, `CategoryImage`, `Inventory`, `QuantityHistory`, `PriceHistory`, `Review`
 
 Key design decisions:
+
 - `created_by` stored as plain `IntegerField` for scalability
 - `Inventory` is a separate `OneToOne` model — price and quantity decoupled from product
 - `QuantityHistory` and `PriceHistory` track all stock and price changes with action types
 - `order=1` convention for default images via `is_default` boolean
 
+
+
 ### `cart`
+
 Models: `Cart`, `CartItem`
 
 - Authenticated users: cart stored in database
@@ -68,19 +104,26 @@ Models: `Cart`, `CartItem`
 - On login, session cart is merged into the database cart via a `user_logged_in` signal
 - Context processor provides `cart_item_count` and `cart_subtotal` to all templates
 
+
+
 ### `order`
+
 Models: `Order`, `OrderItem`, `OrderAddress`, `OrderEvent`, `Payment`
 
 Key design decisions:
+
 - `customer_id`, `product_id`, `rider_id` stored as plain `IntegerField` — no FK for scalability
 - `OrderItem` stores product name, SKU, price as a snapshot at time of order
 - `OrderEvent` is an append-only event log — each status change creates a new row
 - `Order.current_status` is a denormalized fast-read field, kept in sync with `OrderEvent`
-- `Payment` is a separate model supporting multiple payment attempts per order
+- `Payment` is a placeholder for multiple attempts (COD / bKash / Nagad / SSLCommerz). There is no pay view or provider SDK; checkout does not create a `Payment` row
 - Inventory is decremented on order placement and restored on cancellation
 - `QuantityHistory` entry created for every inventory change
 
+
+
 ### `rider`
+
 Models: `RiderProfile`, `RiderApplication`, `RiderAddress`
 
 - `RiderAddress` supports one active address per rider via a DB constraint
@@ -89,17 +132,30 @@ Models: `RiderProfile`, `RiderApplication`, `RiderAddress`
 
 ---
 
+
+
 ## URL Structure
 
-| Prefix | Includes | Description |
-|---|---|---|
-| `/` | `core.urls` | Public pages |
-| `/my-dashboard/` | `order/customer_urls.py`, `user.urls`, `cart.urls` | Customer dashboard |
-| `/manager-dashboard/` | `order/manager_urls.py`, `rider.urls`, `product.urls` | Manager dashboard |
-| `/rider-dashboard/` | `order/rider_urls.py` | Rider dashboard |
-| `/accounts/` | `allauth.urls` | Auth (login, signup, etc.) |
+
+| Prefix                                   | Includes                   | Description                                     |
+| ---------------------------------------- | -------------------------- | ----------------------------------------------- |
+| `/`                                      | `core.urls`                | Homepage, shop, categories, about, address AJAX |
+| `/admin/`                                | Django admin               | Admin site                                      |
+| `/accounts/`                             | `allauth.urls`             | Login, signup, email, Google OAuth              |
+| `/cart/`                                 | `cart.urls`                | Cart                                            |
+| `/my-dashboard/`                         | `users.urls`               | Profile and addresses                           |
+| `/my-dashboard/orders/`                  | `order.urls`               | Customer orders                                 |
+| `/my-dashboard/be-a-rider/`              | `rider.urls`               | Rider applications                              |
+| `/manager-dashboard/`                    | `product.urls`             | Manager products and categories                 |
+| `/manager-dashboard/orders/`             | `order.urls`               | Manager orders                                  |
+| `/manager-dashboard/rider-applications/` | `rider.urls`               | Manager rider applications                      |
+| `/manager-dashboard/rider-profiles/`     | `rider.urls`               | Manager rider profiles                          |
+| `/rider-dashboard/`                      | `order.urls`, `rider.urls` | Rider orders, profile, addresses                |
+
 
 ---
+
+
 
 ## Key Design Patterns
 
@@ -116,6 +172,8 @@ Models: `RiderProfile`, `RiderApplication`, `RiderAddress`
 **Atomic transactions** — order placement, cancellation, and inventory updates are wrapped in `transaction.atomic()` so partial failures never leave the database in an inconsistent state.
 
 ---
+
+
 
 ## Setup
 
@@ -137,31 +195,37 @@ npm install
 npm run watch:css
 ```
 
-### 2. Start Docker services
+
+
+### 2. Database (optional local Postgres)
+
+Compose only starts PostgreSQL. Skip this step if `DATABASE_URL` already points at a hosted database.
 
 ```bash
 docker compose up -d
 ```
 
-| Service | Image | Host port | Notes |
-|---|---|---|---|
-| `ecom-postgres` | `postgres:17` | `5432` | User `admin`, password `password`, database `ecom-db` |
-| `ecom-redis` | `redis/redis-stack:latest` | `6379` (Redis), `8001` (Redis Insight) | Persistence via `--SAVE 900 1` |
-| `ecom-pgadmin` | `dpage/pgadmin4` | `5050` | Login `admin@example.com` / `password` |
 
-Data is stored in named volumes (`ecom-post-data`, `ecom-redis-data`). Stop with `docker compose down`; add `-v` only if you also want to wipe those volumes.
+| Service         | Image         | Host port | Notes                                                 |
+| --------------- | ------------- | --------- | ----------------------------------------------------- |
+| `ecom-postgres` | `postgres:17` | `5432`    | User `admin`, password `password`, database `ecom-db` |
+
+
+Data is stored in the `ecom-post-data` volume. Stop with `docker compose down`; add `-v` only if you also want to wipe that volume.
 
 ### 3. Environment file
 
-Create a `.env` in the project root (Compose credentials above match the defaults):
+Create a `.env` in the project root. Do not commit it (it is gitignored).
 
 ```
 DJANGO_SECRET=change-me
 DEBUG=True
 ALLOWED_HOSTS=localhost,127.0.0.1,0.0.0.0
 
+# Local Compose Postgres (use your hosted URL instead if not using Docker)
 DATABASE_URL=postgres://admin:password@localhost:5432/ecom-db
 
+# Used only when DEBUG=False
 REDIS_CACHE_LOCATION=redis://localhost:6379/1
 REDIS_CACHE_VERSION=1
 
@@ -173,12 +237,13 @@ DEFAULT_FROM_EMAIL=noreply@example.com
 GOOGLE_CLIENT_ID=replace-me
 GOOGLE_CLIENT_SECRET=replace-me
 
+# Required when DEBUG=False
 CLOUDINARY_CLOUD_NAME=
 CLOUDINARY_API_KEY=
 CLOUDINARY_API_SECRET=
 ```
 
-`DATABASE_URL` and `REDIS_CACHE_LOCATION` use `localhost` because Django runs on the host and Compose publishes those ports. Point them at the service names (`ecom-postgres`, `ecom-redis`) only if you run the app inside the same Compose network.
+With `DEBUG=True`, Django uses in-process LocMem cache, local media files, and the console email backend. Redis, Cloudinary, and the Resend API key are required in production (`DEBUG=False`).
 
 ### 4. Migrate
 
@@ -187,9 +252,13 @@ python manage.py migrate
 python manage.py createsuperuser
 ```
 
+
+
 ### 5. Load fixtures and seed data
 
 JSON fixtures live in `fixtures/` (`FIXTURE_DIRS` in settings). Pick **one** of the paths below — `load_all_data` already includes the address fixtures.
+
+An empty catalog is valid: the homepage, shop, and category pages show “No products found.” / “No categories found.” until you seed or add data in admin.
 
 #### Address fixtures only
 
@@ -208,12 +277,16 @@ Same thing via the wrapper command:
 python manage.py create_address
 ```
 
-| File | Model |
-|---|---|
+
+| File                      | Model          |
+| ------------------------- | -------------- |
 | `fixtures/countries.json` | `core.Country` |
-| `fixtures/cities.json` | `core.City` |
-| `fixtures/areas.json` | `core.Area` |
-| `fixtures/zones.json` | `core.Zone` |
+| `fixtures/cities.json`    | `core.City`    |
+| `fixtures/areas.json`     | `core.Area`    |
+| `fixtures/zones.json`     | `core.Zone`    |
+
+
+
 
 #### Full demo catalog
 
@@ -245,11 +318,13 @@ python manage.py load_order
 
 Seeded demo users use password `Test1234!` (usernames like `customer_jane_0`, `manager_…`, `rider_…`).
 
-Homepage HTML is cached in Redis for 15 minutes. After seeding, flush cache if the home page still looks empty:
+The homepage is cached for 15 minutes. After seeding, flush cache if it still looks empty:
 
 ```bash
 python manage.py shell -c "from django.core.cache import cache; cache.clear()"
 ```
+
+In debug, restarting `runserver` also clears the LocMem cache.
 
 ### 6. Run
 
@@ -257,24 +332,4 @@ python manage.py shell -c "from django.core.cache import cache; cache.clear()"
 python manage.py runserver
 ```
 
-Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/). pgAdmin is at [http://127.0.0.1:5050/](http://127.0.0.1:5050/); Redis Insight at [http://127.0.0.1:8001/](http://127.0.0.1:8001/).
-
----
-
-## Permissions
-
-| Permission | Used By |
-|---|---|
-| `order.view_order` | Manager order list and detail |
-| `order.change_order` | Manager assign rider |
-| `order.cancel_order` | Manager cancel order (custom permission) |
-| `product.view_product` | Manager product list |
-| `product.view_category` | Manager category list |
-| `rider.view_riderapplication` | Manager rider applications |
-| `rider.view_riderprofile` | Manager rider profiles |
-
----
-
-## License
-
-MIT
+Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
