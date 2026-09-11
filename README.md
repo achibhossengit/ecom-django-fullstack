@@ -1,6 +1,8 @@
-# ecom-django-fullstack
+# Dcom
 
-A full-stack e-commerce web application built with Django, DaisyUI, and Tailwind CSS. The platform supports customers, managers, and riders — each with their own dashboard and workflows.
+**Dcom** is a full-stack e-commerce web application built with Django, DaisyUI, and Tailwind CSS. The platform supports customers, managers, and riders — each with their own dashboard and workflows.
+
+**Live:** [dcom.achibhossen.me](https://dcom.achibhossen.me)
 
 ---
 
@@ -70,7 +72,7 @@ Created by seed commands (`create_groups`, `assign_grouppermissions`), not JSON 
 
 
 
-## Apps Overview
+## Overview
 
 
 
@@ -210,24 +212,7 @@ python manage.py collectstatic
 Do not commit `static/` or `staticfiles/`. JS, images, and compiled CSS live in `assets/`. `collectstatic` copies them to `staticfiles/`.
 
 
-
-### 2. Database (optional local Postgres)
-
-Compose only starts PostgreSQL. Skip this step if `DATABASE_URL` already points at a hosted database.
-
-```bash
-docker compose up -d
-```
-
-
-| Service         | Image         | Host port | Notes                                                 |
-| --------------- | ------------- | --------- | ----------------------------------------------------- |
-| `ecom-postgres` | `postgres:17` | `5432`    | User `admin`, password `password`, database `ecom-db` |
-
-
-Data is stored in the `ecom-post-data` volume. Stop with `docker compose down`; add `-v` only if you also want to wipe that volume.
-
-### 3. Environment file
+### 2. Environment file
 
 Create a `.env` in the project root. Do not commit it (it is gitignored).
 
@@ -259,86 +244,36 @@ CLOUDINARY_API_SECRET=
 
 With `DEBUG=True`, Django uses in-process LocMem cache, local media files, and the console email backend. Redis, Cloudinary, and the Resend API key are required in production (`DEBUG=False`). Redis is only the Django cache backend for the homepage catalog; login still uses database sessions.
 
-### 4. Migrate
+### 3. Migrate
 
 ```bash
 python manage.py migrate
 python manage.py createsuperuser
 ```
 
+### 4. Load fixtures and seed data
 
-
-### 5. Load fixtures and seed data
-
-JSON fixtures live in `fixtures/` (`FIXTURE_DIRS` in settings). Pick **one** of the paths below — `load_all_data` already includes the address fixtures.
-
-An empty catalog is valid: the homepage, shop, and category pages show “No products found.” / “No categories found.” until you seed or add data in admin.
-
-#### Address fixtures only
-
-Load country → city → area → zone **in that order** (foreign keys):
-
-```bash
-python manage.py loaddata countries.json
-python manage.py loaddata cities.json
-python manage.py loaddata areas.json
-python manage.py loaddata zones.json
-```
-
-Same thing via the wrapper command:
-
-```bash
-python manage.py create_address
-```
-
-
-| File                      | Model          |
-| ------------------------- | -------------- |
-| `fixtures/countries.json` | `core.Country` |
-| `fixtures/cities.json`    | `core.City`    |
-| `fixtures/areas.json`     | `core.Area`    |
-| `fixtures/zones.json`     | `core.Zone`    |
-
-
-
-
-#### Full demo catalog
-
-Seeds addresses, users, products, riders, carts, orders, and group permissions:
+Seeds the full demo catalog:
 
 ```bash
 python manage.py load_all_data
 ```
 
-Order of commands: `create_address` → `load_users` → `load_rider` → `load_product` → `load_cart` → `load_order` → `assign_grouppermissions`.
-
-Continue past a failed step:
-
 ```bash
-python manage.py load_all_data --ignore-error
+python manage.py load_all_data --ignore-error   # continue if a step fails
 ```
 
-Or run a subset:
+It runs, in order: `create_address` → `load_users` → `load_rider` → `load_product` → `load_cart` → `load_order` → `assign_grouppermissions`.
 
-```bash
-python manage.py load_users
-python manage.py load_product
-python manage.py load_rider
-python manage.py load_cart
-python manage.py load_order
-```
+Data comes from `fixtures/` (`FIXTURE_DIRS`): address JSON (`countries.json` → `cities.json` → `areas.json` → `zones.json` via `create_address`), plus users/products/riders/carts/orders from their load commands. Images are pulled from `fixtures/category_images/`, `fixtures/product_images/`, and `fixtures/profile_images/` when present (`.jpg` / `.png`); otherwise skipped.
 
-`load_product` and `load_rider` attach images from `fixtures/category_images/`, `fixtures/product_images/`, and `fixtures/profile_images/` when those folders exist and contain `.jpg` / `.png` files; otherwise image upload is skipped.
+Demo users use password `Test1234!` (e.g. `customer_jane_0`, `manager_…`, `rider_…`). Without seeding, the shop shows empty-state messages until you add data.
 
-Seeded demo users use password `Test1234!` (usernames like `customer_jane_0`, `manager_…`, `rider_…`).
-
-The homepage catalog is cached for 15 minutes and is cleared when products or categories change. After seeding, flush cache if the homepage still looks empty:
+If the homepage still looks empty after seeding (15‑minute catalog cache), flush it or restart `runserver` in debug:
 
 ```bash
 python manage.py shell -c "from django.core.cache import cache; cache.clear()"
 ```
-
-In debug, restarting `runserver` also clears the LocMem cache.
 
 ### 6. Run
 
