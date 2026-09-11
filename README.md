@@ -1,5 +1,9 @@
 # Dcom
 
+<p align="center">
+  <img src="docs/images/dcom-intro.png" alt="Dcom storefront" width="900">
+</p>
+
 **Dcom** is a full-stack e-commerce web application built with Django, DaisyUI, and Tailwind CSS. The platform supports customers, managers, and riders — each with their own dashboard and workflows.
 
 **Live:** [dcom.achibhossen.me](https://dcom.achibhossen.me)
@@ -282,3 +286,35 @@ python manage.py runserver
 ```
 
 Open [http://127.0.0.1:8000/](http://127.0.0.1:8000/).
+
+---
+
+## Screenshots
+
+### Homepage
+
+![Homepage](docs/images/homepage.png)
+
+### Shop
+
+![Shop](docs/images/shoppage.png)
+
+### Product detail
+
+![Product detail](docs/images/product-detail-page.png)
+
+### Categories
+
+![Categories](docs/images/categories-page.png)
+
+### About
+
+![About](docs/images/about-page.png)
+
+### Sign in
+
+![Sign in](docs/images/signin-page.png)
+
+### Sign up
+
+![Sign up](docs/images/signup-page.png)
